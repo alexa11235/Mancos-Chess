@@ -8,6 +8,9 @@ import GeneralStandings from './components/GeneralStandings';
 import uploadIcon from './assets/align-to-top-svgrepo-com.svg';
 // NUEVO: Importamos el logo del torneo
 import tournamentLogo from './assets/mancos.jpg';
+import { useEffect } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from './firebase'; // Tu nuevo archivo de conexión
 
 function App() {
   const [showInfo, setShowInfo] = useState(false);
@@ -16,17 +19,43 @@ function App() {
   const [tournamentPairings, setTournamentPairings] = useState(initialPairings);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
 
-  // Función que guarda el resultado en la tabla
-  const handleSaveResult = (ronda, matchIndex, resultado, gameLink) => {
+  // NUEVO: Cargar datos desde Firebase al iniciar
+  useEffect(() => {
+    const fetchPairings = async () => {
+      // Apuntamos a un documento llamado "resultados" dentro de la colección "torneo"
+      const docRef = doc(db, "torneo", "resultados");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        // Si ya hay datos en la nube, los usamos
+        setTournamentPairings(docSnap.data());
+      } else {
+        // Si la base de datos está vacía (primera vez), subimos tus datos locales iniciales
+        await setDoc(docRef, initialPairings);
+      }
+    };
+    fetchPairings();
+  }, []);
+  // Función que guarda el resultado en la tabla Y EN LA NUBE
+  const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
     const updatedPairings = { ...tournamentPairings };
     updatedPairings[ronda][matchIndex].resultado = resultado;
     
-    // Si el usuario puso un link, lo guardamos
     if (gameLink && gameLink.trim() !== '') {
       updatedPairings[ronda][matchIndex].gameLink = gameLink.trim();
     }
     
+    // Actualizamos la pantalla de inmediato
     setTournamentPairings(updatedPairings);
+
+    // NUEVO: Guardamos el cambio en Firebase para que los demás lo vean
+    try {
+      const docRef = doc(db, "torneo", "resultados");
+      await setDoc(docRef, updatedPairings);
+      console.log("¡Resultado guardado en la nube!");
+    } catch (error) {
+      console.error("Error al guardar en Firebase:", error);
+    }
   };
 
   const roundDates = {
@@ -95,7 +124,7 @@ function App() {
         
         {/* Subida de resultados dinámica */}
         <p className="text-sm text-gray-400 mb-8 font-light leading-relaxed text-center">
-          El ganador sube la partida y el árbitro (Ferny) verifica. Los resultados se publicarán en la Tabla General. 
+          El ganador sube lel resultado y el árbitro (Ferny) verifica. Los resultados se publicarán en la Tabla General. 
           <span 
             onClick={() => setShowSubmitModal(true)} 
             className="ml-3 text-blue-400 cursor-pointer hover:text-blue-300 font-medium tracking-wide inline-flex items-center gap-1.5 align-middle transition-colors"
