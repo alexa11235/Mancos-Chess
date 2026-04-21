@@ -47,30 +47,46 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
 
   return (
     <div className="overflow-x-auto bg-[#1a1a1a] rounded-lg shadow-2xl">
+      {/* Mantenemos el table-fixed para que los porcentajes funcionen a la fuerza */}
       <table className="w-full border-collapse text-sm table-fixed">
         <thead>
           <tr className="bg-black/40 text-gray-400">
-            <th className="p-4 text-left font-bold w-48 border-r border-gray-800">Jugadores</th>
+            {/* Jugadores: 28% en móvil, w-48 en escritorio */}
+            <th className="p-1 md:p-4 text-left font-bold w-[28%] md:w-48 border-r border-gray-800 text-[8px] md:text-sm">
+              Jugadores
+            </th>
+            {/* Matriz: 6% cada una en móvil, w-12 en escritorio */}
             {sortedPlayers.map((p, i) => (
-              <th key={i} className="p-2 text-center border-r border-gray-800 w-12">{i + 1}</th>
+              <th key={i} className="p-0 md:p-2 text-center border-r border-gray-800 w-[6%] md:w-12 text-[8px] md:text-sm">
+                {i + 1}
+              </th>
             ))}
-            <th className="p-4 text-center font-bold text-white w-20 border-l-2 border-gray-700">PTS</th>
-            <th className="p-4 text-center font-bold text-blue-400 w-16">#</th>
+            {/* PTS: 10% en móvil, w-20 en escritorio */}
+            <th className="p-0 md:p-4 text-center font-bold text-white w-[10%] md:w-20 border-l-2 border-gray-700 text-[8px] md:text-sm">
+              PTS
+            </th>
+            {/* Rank: 8% en móvil, w-16 en escritorio */}
+            <th className="p-0 md:p-4 text-center font-bold text-blue-400 w-[8%] md:w-16 text-[8px] md:text-sm">
+              #
+            </th>
           </tr>
         </thead>
         <tbody>
           {sortedPlayers.map((playerRow, rowIndex) => (
             <tr key={rowIndex} className="border-b border-gray-800 hover:bg-white/5">
-              <td className="p-3 border-r border-gray-800 flex items-center gap-3 bg-black/10">
+              
+              {/* Celda de Jugadores */}
+              <td className="p-1 md:p-3 border-r border-gray-800 flex items-center gap-1 md:gap-3 bg-black/10 overflow-hidden">
                 <button 
                   onClick={() => onPlayerClick({ ...players[playerRow.nombre], nombre: playerRow.nombre })}
-                  className="w-7 h-7 rounded border border-gray-600 flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+                  className="w-4 h-4 md:w-7 md:h-7 rounded border border-gray-600 flex items-center justify-center text-[7px] md:text-[10px] font-bold text-white shrink-0"
                 >
                   {playerRow.inicial}
                 </button>
-                <span className="text-gray-200 font-medium truncate">{playerRow.nombre}</span>
+                <span className="text-gray-200 font-medium truncate text-[8px] md:text-sm">{playerRow.nombre}</span>
               </td>
 
+              {/* Celdas de Resultados */}
               {sortedPlayers.map((playerCol, colIndex) => {
                 const esDiagonal = rowIndex === colIndex;
                 const resultado = playerRow.resultadosContra[playerCol.nombre];
@@ -78,13 +94,12 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
                 return (
                   <td 
                     key={colIndex} 
-                    className={`p-0 border-r border-gray-800 text-center relative h-12 w-12 ${
+                    className={`p-0 border-r border-gray-800 text-center relative h-6 md:h-12 ${
                       esDiagonal ? 'bg-[#121212]' : ''
                     }`}
                   >
                     {esDiagonal ? (
-                      /* El logo de la mano en la diagonal con su color original */
-                      <div className="absolute inset-0 flex items-center justify-center p-2">
+                      <div className="absolute inset-0 flex items-center justify-center p-0.5 md:p-2">
                          <img 
                            src={tournamentLogo} 
                            alt="Mancos" 
@@ -92,7 +107,7 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
                          />
                       </div>
                     ) : (
-                      <span className={`font-mono font-bold text-base ${
+                      <span className={`font-mono font-bold text-[8px] md:text-base ${
                         resultado === '1' ? 'text-green-400' : 
                         resultado === '0' ? 'text-red-400' : 
                         'text-gray-500'
@@ -104,12 +119,14 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
                 );
               })}
 
-              <td className="p-3 text-center font-bold text-white text-lg border-l-2 border-gray-700 bg-black/30">
+              {/* Celda PTS */}
+              <td className="p-0 md:p-3 text-center font-bold text-white text-[9px] md:text-lg border-l-2 border-gray-700 bg-black/30">
                 {playerRow.puntos}
               </td>
 
-              <td className="p-3 text-center">
-                <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full font-bold text-[10px] ${
+              {/* Celda Posición */}
+              <td className="p-0 md:p-3 text-center">
+                <span className={`inline-flex items-center justify-center w-3 h-3 md:w-6 md:h-6 rounded-full font-bold text-[7px] md:text-[10px] ${
                   rowIndex === 0 ? 'bg-yellow-500 text-black shadow-[0_0_10px_rgba(234,179,8,0.3)]' :
                   rowIndex === 1 ? 'bg-gray-300 text-black' :
                   rowIndex === 2 ? 'bg-amber-700 text-white' :

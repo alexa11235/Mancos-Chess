@@ -7,12 +7,14 @@ const MatchTable = ({ currentPairings, players, onPlayerClick }) => {
         <thead>
           <tr className="border-b border-gray-700 text-gray-400 text-[10px] md:text-xs uppercase tracking-tight md:tracking-wider">
             
-            {/* Balanceamos Blancas y Negras a 31% cada una para repartir el espacio equitativamente */}
-            <th className="py-2 px-1 md:py-3 md:px-4 font-medium w-[31%] md:w-[35%] text-left">Blancas</th>
+            {/* Escritorio: 25% (Ajustado para no robar espacio al centro) */}
+            <th className="py-2 px-1 md:py-3 md:px-4 font-medium w-[31%] md:w-[20%] text-left">Blancas</th>
             
-            <th className="py-2 px-0 md:py-3 md:px-60 font-medium w-[24%] md:w-[20%] text-center">Resultado</th>
+            {/* Escritorio: 40% (Esto actúa como tu antiguo px-60, creando un hueco enorme en el centro) */}
+            <th className="py-2 px-0 md:py-3 md:px-2 font-medium w-[24%] md:w-[50%] text-center">Resultado</th>
             
-            <th className="py-2 px-1 md:py-3 md:px-3 font-medium w-[31%] md:w-[35%] text-left">Negras</th>
+            {/* Escritorio: 25% (Como el centro es muy grande, esta columna es empujada a la derecha) */}
+            <th className="py-2 px-1 md:py-3 md:px-3 font-medium w-[31%] md:w-[20%] text-left">Negras</th>
             
             <th className="py-2 px-0 md:py-3 md:px-2 font-medium w-[14%] md:w-[10%] text-center">Partida</th>
           </tr>
@@ -23,7 +25,6 @@ const MatchTable = ({ currentPairings, players, onPlayerClick }) => {
               const player = players[match.bye];
               return (
                 <tr key={index} className="bg-gray-900/30">
-                  {/* Reducimos el gap en móvil de gap-1.5 a gap-1 para ganar píxeles */}
                   <td className="py-3 px-1 md:py-4 md:px-4 flex items-center gap-1 md:gap-3">
                     <button 
                       onClick={() => onPlayerClick({ ...player, nombre: match.bye })}
@@ -31,7 +32,6 @@ const MatchTable = ({ currentPairings, players, onPlayerClick }) => {
                     >
                       {player ? player.inicial : match.bye[0]}
                     </button>
-                    {/* Reducimos la letra del nombre de text-xs a text-[11px] en móvil */}
                     <span className="text-gray-300 font-medium text-[11px] md:text-base truncate">{match.bye}</span>
                   </td>
                   <td className="py-3 px-1 md:py-4 md:px-2 text-center">
@@ -58,8 +58,7 @@ const MatchTable = ({ currentPairings, players, onPlayerClick }) => {
                     >
                       {playerWhite ? playerWhite.inicial : match.white[0]}
                     </button>
-                    {/* text-[11px] en móvil para que quepan todos los nombres completos */}
-                    <span className="text-gray-200 text-[11px] md:text-base truncate block">{match.white}</span>
+                    <span className="text-gray-200 text-[11px] md:text-sm truncate block">{match.white}</span>
                   </div>
                 </td>
 
@@ -87,8 +86,7 @@ const MatchTable = ({ currentPairings, players, onPlayerClick }) => {
                     >
                       {playerBlack ? playerBlack.inicial : match.black[0]}
                     </button>
-                    {/* text-[11px] en móvil para que quepan todos los nombres completos */}
-                    <span className="text-gray-200 text-[11px] md:text-base truncate block">{match.black}</span>
+                    <span className="text-gray-200 text-[11px] md:text-sm truncate block">{match.black}</span>
                   </div>
                 </td>
 
