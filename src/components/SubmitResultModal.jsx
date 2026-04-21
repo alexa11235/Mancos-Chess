@@ -66,7 +66,7 @@ const SubmitResultModal = ({ isOpen, onClose, currentRound, pairings, onSave }) 
           {/* Selector de Resultado */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-2">Resultado oficial:</label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setResult('1 - 0')}
@@ -74,6 +74,15 @@ const SubmitResultModal = ({ isOpen, onClose, currentRound, pairings, onSave }) 
               >
                 1 - 0<br/><span className="text-[10px] font-sans font-normal opacity-70">Ganan Blancas</span>
               </button>
+              
+              <button
+                type="button"
+                onClick={() => setResult('0 - 1')}
+                className={`py-3 rounded border font-mono font-bold transition-colors ${result === '0 - 1' ? 'bg-blue-600 border-blue-400 text-white' : 'bg-gray-800 border-gray-600 text-gray-300 hover:bg-gray-700'}`}
+              >
+                0 - 1<br/><span className="text-[10px] font-sans font-normal opacity-70">Ganan Negras</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setResult('½ - ½')}
@@ -81,12 +90,14 @@ const SubmitResultModal = ({ isOpen, onClose, currentRound, pairings, onSave }) 
               >
                 ½ - ½<br/><span className="text-[10px] font-sans font-normal opacity-70">Empate</span>
               </button>
+
+              {/* NUEVO BOTÓN PARA BORRAR/DESHACER */}
               <button
                 type="button"
-                onClick={() => setResult('0 - 1')}
-                className={`py-3 rounded border font-mono font-bold transition-colors ${result === '0 - 1' ? 'bg-blue-600 border-blue-400 text-white' : 'bg-gray-800 border-gray-600 text-gray-300 hover:bg-gray-700'}`}
+                onClick={() => setResult('BORRAR')}
+                className={`py-3 rounded border font-sans font-bold transition-colors ${result === 'BORRAR' ? 'bg-red-600 border-red-400 text-white' : 'bg-gray-800 border-gray-600 text-red-400 hover:bg-gray-700 hover:text-red-300'}`}
               >
-                0 - 1<br/><span className="text-[10px] font-sans font-normal opacity-70">Ganan Negras</span>
+                Deshacer<br/><span className="text-[10px] font-normal opacity-70">Limpiar resultado</span>
               </button>
             </div>
           </div>

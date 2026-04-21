@@ -36,23 +36,32 @@ function App() {
     };
     fetchPairings();
   }, []);
+
   // Función que guarda el resultado en la tabla Y EN LA NUBE
+  // Función que guarda (o borra) el resultado en la tabla Y EN LA NUBE
   const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
     const updatedPairings = { ...tournamentPairings };
-    updatedPairings[ronda][matchIndex].resultado = resultado;
     
-    if (gameLink && gameLink.trim() !== '') {
-      updatedPairings[ronda][matchIndex].gameLink = gameLink.trim();
+    // Si la orden es borrar, limpiamos los datos
+    if (resultado === 'BORRAR') {
+      updatedPairings[ronda][matchIndex].resultado = null;
+      updatedPairings[ronda][matchIndex].gameLink = null;
+    } else {
+      // Si es un resultado normal, lo guardamos
+      updatedPairings[ronda][matchIndex].resultado = resultado;
+      if (gameLink && gameLink.trim() !== '') {
+        updatedPairings[ronda][matchIndex].gameLink = gameLink.trim();
+      }
     }
     
     // Actualizamos la pantalla de inmediato
     setTournamentPairings(updatedPairings);
 
-    // NUEVO: Guardamos el cambio en Firebase para que los demás lo vean
+    // Guardamos el cambio (o el borrado) en Firebase
     try {
       const docRef = doc(db, "torneo", "resultados");
       await setDoc(docRef, updatedPairings);
-      console.log("¡Resultado guardado en la nube!");
+      console.log("¡Base de datos actualizada!");
     } catch (error) {
       console.error("Error al guardar en Firebase:", error);
     }
@@ -72,17 +81,21 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#121212] text-gray-200 p-6 font-sans">
+    <div className="min-h-screen bg-[#121212] text-gray-200 p-2 md:p-6 font-sans">
       
       {/* HEADER CENTRADO CON LOGO */}
       <div className="max-w-5xl mx-auto mb-10 flex flex-col items-center text-center">
-        <div className="flex items-center gap-5 mb-4">
+        {/* Aquí forzamos el centrado (justify-center) y dejamos el logo grande en celulares */}
+        <div className="flex items-center justify-center gap-4 mb-4 w-full">
           <img 
             src={tournamentLogo} 
             alt="Logo Torneo de Mancos" 
-            className="w-16 h-16 object-cover rounded-full border-2 border-gray-700 shadow-lg"
+            className="w-16 h-16 object-cover rounded-full border-2 border-gray-700 shadow-lg shrink-0"
           />
-          <h1 className="text-5xl font-extrabold text-white tracking-tight">Torneo de Mancos</h1>
+          {/* Añadí un salto de línea (<br/>) oculto en escritorio pero visible en móvil para que el texto no desborde */}
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight text-left leading-tight">
+            Torneo de<br className="block sm:hidden" /> Mancos
+          </h1>
         </div>
         
         <div className="flex gap-4">
@@ -124,7 +137,7 @@ function App() {
         
         {/* Subida de resultados dinámica */}
         <p className="text-sm text-gray-400 mb-8 font-light leading-relaxed text-center">
-          El ganador sube lel resultado y el árbitro (Ferny) verifica. Los resultados se publicarán en la Tabla General. 
+          El ganador sube el resultado y el árbitro (Ferny) verifica. Los resultados se publicarán en la Tabla General. 
           <span 
             onClick={() => setShowSubmitModal(true)} 
             className="ml-3 text-blue-400 cursor-pointer hover:text-blue-300 font-medium tracking-wide inline-flex items-center gap-1.5 align-middle transition-colors"
@@ -150,7 +163,10 @@ function App() {
               className="w-full bg-transparent border border-blue-400/50 text-white p-3 rounded appearance-none focus:outline-none focus:ring-1 focus:ring-blue-400 cursor-pointer relative z-0 text-sm"
             >
               <option value="Tabla General" className="bg-[#1a1a1a]">Tabla General</option>
-              {Object.keys(tournamentPairings).map(ronda => (
+              {Object.keys(tournamentPairings)
+                // Esto fuerza a Javascript a extraer el número de la palabra "Ronda 1" y ordenarlos matemáticamente
+                .sort((a, b) => parseInt(a.replace('Ronda ', '')) - parseInt(b.replace('Ronda ', '')))
+                .map(ronda => (
                 <option key={ronda} value={ronda} className="bg-[#1a1a1a]">{ronda}</option>
               ))}
             </select>
