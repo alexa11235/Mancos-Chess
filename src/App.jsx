@@ -8,6 +8,8 @@ import GeneralStandings from './components/GeneralStandings';
 import uploadIcon from './assets/align-to-top-svgrepo-com.svg';
 // NUEVO: Importamos el logo del torneo
 import tournamentLogo from './assets/mancos.jpg';
+// NUEVO: Importamos la foto del grupo para el Easter Egg
+import groupPic from './assets/group.jpg';
 import { useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from './firebase'; // Tu nuevo archivo de conexión
@@ -18,6 +20,8 @@ function App() {
   const [currentView, setCurrentView] = useState('Ronda 1');
   const [tournamentPairings, setTournamentPairings] = useState(initialPairings);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  // ESTADO DEL EASTER EGG
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
 
   // NUEVO: Cargar datos desde Firebase al iniciar
   useEffect(() => {
@@ -90,7 +94,8 @@ function App() {
           <img 
             src={tournamentLogo} 
             alt="Logo Torneo de Mancos" 
-            className="w-16 h-16 object-cover rounded-full border-2 border-gray-700 shadow-lg shrink-0"
+            onClick={() => setShowEasterEgg(true)}
+            className="w-16 h-16 object-cover rounded-full border-2 border-gray-700 shadow-lg shrink-0 cursor-default"
           />
           {/* Añadí un salto de línea (<br/>) oculto en escritorio pero visible en móvil para que el texto no desborde */}
           <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight text-left leading-tight">
@@ -108,6 +113,20 @@ function App() {
           </button>
         </div>
       </div>
+
+      {/* EASTER EGG MODAL */}
+      {showEasterEgg && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-[100] p-4 cursor-default"
+          onClick={() => setShowEasterEgg(false)}
+        >
+          <img 
+            src={groupPic} 
+            alt="El grupo" 
+            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+          />
+        </div>
+      )}
 
       {/* MODAL DE INFO */}
       {showInfo && (
@@ -189,6 +208,7 @@ function App() {
               pairings={tournamentPairings} 
               players={players} 
               onPlayerClick={(player) => setSelectedPlayer(player)}
+              onLogoClick={() => setShowEasterEgg(true)}
             />
           ) : (
             // Esta es tu MatchTable que ya tenías

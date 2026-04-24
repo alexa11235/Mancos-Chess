@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 // Importamos el logo para la diagonal
 import tournamentLogo from '../assets/mancos.jpg';
 
-const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
+// Recibimos onLogoClick para tu Easter Egg
+const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => {
   
   const data = useMemo(() => {
     const stats = {};
@@ -47,26 +48,26 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
 
   return (
     <div className="overflow-x-auto bg-[#1a1a1a] rounded-lg shadow-2xl">
-      {/* Mantenemos el table-fixed para que los porcentajes funcionen a la fuerza */}
-      <table className="w-full border-collapse text-sm table-fixed">
+      {/* table-fixed fuerza a que los anchos se respeten con mano de hierro */}
+      <table className="w-full border-collapse table-fixed">
         <thead>
           <tr className="bg-black/40 text-gray-400">
-            {/* Jugadores: 28% en móvil, w-48 en escritorio */}
-            <th className="p-1 md:p-4 text-left font-bold w-[28%] md:w-48 border-r border-gray-800 text-[8px] md:text-sm">
+            {/* Jugadores: 26% en móvil, w-48 en escritorio */}
+            <th className="p-1 md:p-4 text-left font-bold w-[26%] md:w-48 border-r border-gray-800 text-[9px] md:text-sm">
               Jugadores
             </th>
-            {/* Matriz: 6% cada una en móvil, w-12 en escritorio */}
+            {/* Matriz (9 columnas): 6.5% cada una en móvil (Total 58.5%), w-12 en escritorio */}
             {sortedPlayers.map((p, i) => (
-              <th key={i} className="p-0 md:p-2 text-center border-r border-gray-800 w-[6%] md:w-12 text-[8px] md:text-sm">
+              <th key={i} className="p-0 md:p-2 text-center border-r border-gray-800 w-[6.5%] md:w-12 text-[8px] md:text-sm">
                 {i + 1}
               </th>
             ))}
-            {/* PTS: 10% en móvil, w-20 en escritorio */}
-            <th className="p-0 md:p-4 text-center font-bold text-white w-[10%] md:w-20 border-l-2 border-gray-700 text-[8px] md:text-sm">
+            {/* PTS: 8% en móvil, w-20 en escritorio */}
+            <th className="p-0 md:p-4 text-center font-bold text-white w-[8%] md:w-20 border-l-2 border-gray-700 text-[8px] md:text-sm">
               PTS
             </th>
-            {/* Rank: 8% en móvil, w-16 en escritorio */}
-            <th className="p-0 md:p-4 text-center font-bold text-blue-400 w-[8%] md:w-16 text-[8px] md:text-sm">
+            {/* Rank: 7.5% en móvil, w-16 en escritorio */}
+            <th className="p-0 md:p-4 text-center font-bold text-blue-400 w-[7.5%] md:w-16 text-[8px] md:text-sm">
               #
             </th>
           </tr>
@@ -75,15 +76,21 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
           {sortedPlayers.map((playerRow, rowIndex) => (
             <tr key={rowIndex} className="border-b border-gray-800 hover:bg-white/5">
               
-              {/* Celda de Jugadores */}
-              <td className="p-1 md:p-3 border-r border-gray-800 flex items-center gap-1 md:gap-3 bg-black/10 overflow-hidden">
-                <button 
-                  onClick={() => onPlayerClick({ ...players[playerRow.nombre], nombre: playerRow.nombre })}
-                  className="w-4 h-4 md:w-7 md:h-7 rounded border border-gray-600 flex items-center justify-center text-[7px] md:text-[10px] font-bold text-white shrink-0"
-                >
-                  {playerRow.inicial}
-                </button>
-                <span className="text-gray-200 font-medium truncate text-[8px] md:text-sm">{playerRow.nombre}</span>
+              {/* Celda de Jugadores. Le quitamos el flex al <td> para que no rompa el table-fixed en iPhone/Android */}
+              <td className="p-1 md:p-3 border-r border-gray-800 bg-black/10 align-middle">
+                {/* El div interno maneja el diseño sin romper la tabla */}
+                <div className="flex items-center gap-1 md:gap-3 overflow-hidden h-full">
+                  <button 
+                    onClick={() => onPlayerClick({ ...players[playerRow.nombre], nombre: playerRow.nombre })}
+                    className="w-4 h-4 md:w-7 md:h-7 rounded border border-gray-600 flex items-center justify-center text-[7px] md:text-[10px] font-bold text-white shrink-0"
+                  >
+                    {playerRow.inicial}
+                  </button>
+                  {/* min-w-0 y flex-1 garantizan que el texto se corte con (...) si no cabe, sin empujar la tabla */}
+                  <span className="text-gray-200 font-medium truncate flex-1 min-w-0 text-[8px] md:text-sm">
+                    {playerRow.nombre}
+                  </span>
+                </div>
               </td>
 
               {/* Celdas de Resultados */}
@@ -94,7 +101,7 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
                 return (
                   <td 
                     key={colIndex} 
-                    className={`p-0 border-r border-gray-800 text-center relative h-6 md:h-12 ${
+                    className={`p-0 border-r border-gray-800 text-center relative h-8 md:h-12 ${
                       esDiagonal ? 'bg-[#121212]' : ''
                     }`}
                   >
@@ -103,11 +110,13 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
                          <img 
                            src={tournamentLogo} 
                            alt="Mancos" 
-                           className="w-full h-full object-contain opacity-30 hover:opacity-60 transition-all duration-300"
+                           onClick={onLogoClick} 
+                           /* Restaurado: hover:opacity-60 y cursor-pointer para tu Easter Egg */
+                           className="w-full h-full object-contain opacity-30 hover:opacity-60 cursor-pointer transition-all duration-300"
                          />
                       </div>
                     ) : (
-                      <span className={`font-mono font-bold text-[8px] md:text-base ${
+                      <span className={`font-mono font-bold text-[10px] md:text-base ${
                         resultado === '1' ? 'text-green-400' : 
                         resultado === '0' ? 'text-red-400' : 
                         'text-gray-500'
@@ -120,13 +129,13 @@ const GeneralStandings = ({ pairings, players, onPlayerClick }) => {
               })}
 
               {/* Celda PTS */}
-              <td className="p-0 md:p-3 text-center font-bold text-white text-[9px] md:text-lg border-l-2 border-gray-700 bg-black/30">
+              <td className="p-0 md:p-3 text-center font-bold text-white text-[10px] md:text-lg border-l-2 border-gray-700 bg-black/30">
                 {playerRow.puntos}
               </td>
 
               {/* Celda Posición */}
               <td className="p-0 md:p-3 text-center">
-                <span className={`inline-flex items-center justify-center w-3 h-3 md:w-6 md:h-6 rounded-full font-bold text-[7px] md:text-[10px] ${
+                <span className={`inline-flex items-center justify-center w-4 h-4 md:w-6 md:h-6 rounded-full font-bold text-[8px] md:text-[10px] ${
                   rowIndex === 0 ? 'bg-yellow-500 text-black shadow-[0_0_10px_rgba(234,179,8,0.3)]' :
                   rowIndex === 1 ? 'bg-gray-300 text-black' :
                   rowIndex === 2 ? 'bg-amber-700 text-white' :

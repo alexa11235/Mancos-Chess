@@ -31,8 +31,8 @@ export const players = {
   },
   "Doc. Abraham": { 
     inicial: "Ab", 
-    modalidad: ["Pendiente"], 
-    disponibilidad: "Aún no contesta la encuesta" 
+    modalidad: ["Presencial con carro"], 
+    disponibilidad: "Lunes a viernes por las tarde" 
   },
   "Mike Alex": { 
     inicial: "M", 
