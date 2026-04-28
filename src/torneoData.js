@@ -9,7 +9,7 @@ export const players = {
     modalidad: ["Presencial con carro", "En línea"], 
     disponibilidad: "Viernes, sábados y domingos después de las 5pm" 
   },
-  "Fernando Vasquez": { 
+  "Fer Vásquez": { 
     inicial: "F", 
     modalidad: ["Presencial con carro"], 
     disponibilidad: "Fines de semana, lunes o miercoles en la tarde noche." 
@@ -49,7 +49,7 @@ export const players = {
 export const pairings = {
   "Ronda 1": [
     { white: "Lalo Barajas", black: "Carlos Imanol" },
-    { white: "Fernando Vasquez", black: "Albert AA" },
+    { white: "Fer Vásquez", black: "Albert AA" },
     { white: "Noé Santos", black: "Diego Pérez" },
     { white: "Doc. Abraham", black: "Mike Alex" },
     { bye: "Ferny Barreda" }
@@ -58,7 +58,7 @@ export const pairings = {
     { white: "Ferny Barreda", black: "Noé Santos" },
     { white: "Albert AA", black: "Lalo Barajas" },
     { white: "Diego Pérez", black: "Carlos Imanol" },
-    { white: "Mike Alex", black: "Fernando Vasquez" },
+    { white: "Mike Alex", black: "Fer Vásquez" },
     { bye: "Doc. Abraham" }
   ],
   "Ronda 3": [
@@ -66,12 +66,12 @@ export const pairings = {
     { white: "Noé Santos", black: "Doc. Abraham" },
     { white: "Lalo Barajas", black: "Diego Pérez" },
     { white: "Albert AA", black: "Mike Alex" },
-    { bye: "Fernando Vasquez" }
+    { bye: "Fer Vásquez" }
   ],
   "Ronda 4": [
     { white: "Ferny Barreda", black: "Diego Pérez" },
     { white: "Doc. Abraham", black: "Carlos Imanol" },
-    { white: "Noé Santos", black: "Fernando Vasquez" },
+    { white: "Noé Santos", black: "Fer Vásquez" },
     { white: "Mike Alex", black: "Lalo Barajas" },
     { bye: "Albert AA" }
   ],
@@ -79,32 +79,32 @@ export const pairings = {
     { white: "Lalo Barajas", black: "Ferny Barreda" },
     { white: "Diego Pérez", black: "Doc. Abraham" },
     { white: "Albert AA", black: "Noé Santos" },
-    { white: "Carlos Imanol", black: "Fernando Vasquez" },
+    { white: "Carlos Imanol", black: "Fer Vásquez" },
     { bye: "Mike Alex" }
   ],
   "Ronda 6": [
     { white: "Doc. Abraham", black: "Ferny Barreda" },
     { white: "Noé Santos", black: "Mike Alex" },
-    { white: "Fernando Vasquez", black: "Diego Pérez" },
+    { white: "Fer Vásquez", black: "Diego Pérez" },
     { white: "Carlos Imanol", black: "Albert AA" },
     { bye: "Lalo Barajas" }
   ],
   "Ronda 7": [
     { white: "Lalo Barajas", black: "Doc. Abraham" },
-    { white: "Ferny Barreda", black: "Fernando Vasquez" },
+    { white: "Ferny Barreda", black: "Fer Vásquez" },
     { white: "Mike Alex", black: "Carlos Imanol" },
     { white: "Diego Pérez", black: "Albert AA" },
     { bye: "Noé Santos" }
   ],
   "Ronda 8": [
     { white: "Noé Santos", black: "Lalo Barajas" },
-    { white: "Fernando Vasquez", black: "Doc. Abraham" },
+    { white: "Fer Vásquez", black: "Doc. Abraham" },
     { white: "Albert AA", black: "Ferny Barreda" },
     { white: "Diego Pérez", black: "Mike Alex" },
     { bye: "Carlos Imanol" }
   ],
   "Ronda 9": [
-    { white: "Lalo Barajas", black: "Fernando Vasquez" },
+    { white: "Lalo Barajas", black: "Fer Vásquez" },
     { white: "Noé Santos", black: "Carlos Imanol" },
     { white: "Doc. Abraham", black: "Albert AA" },
     { white: "Ferny Barreda", black: "Mike Alex" },

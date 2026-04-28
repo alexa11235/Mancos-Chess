@@ -25,14 +25,17 @@ const MatchTable = ({ currentPairings, players, onPlayerClick }) => {
               const player = players[match.bye];
               return (
                 <tr key={index} className="bg-gray-900/30">
-                  <td className="py-3 px-1 md:py-4 md:px-4 flex items-center gap-1 md:gap-3">
-                    <button 
-                      onClick={() => onPlayerClick({ ...player, nombre: match.bye })}
-                      className="w-6 h-6 md:w-8 md:h-8 rounded border border-gray-500 flex items-center justify-center text-[10px] md:text-xs font-bold text-gray-300 hover:bg-gray-700 transition-colors shrink-0"
-                    >
-                      {player ? player.inicial : match.bye[0]}
-                    </button>
-                    <span className="text-gray-300 font-medium text-[11px] md:text-base truncate">{match.bye}</span>
+                  <td className="py-3 px-1 md:py-4 md:px-4">
+                    <div className="flex items-center gap-1 md:gap-3 overflow-hidden">
+                      <button 
+                        onClick={() => onPlayerClick({ ...player, nombre: match.bye })}
+                        className="w-6 h-6 md:w-8 md:h-8 rounded border border-gray-500 flex items-center justify-center text-[10px] md:text-xs font-bold text-gray-300 hover:bg-gray-700 transition-colors shrink-0"
+                      >
+                        {player ? player.inicial : match.bye[0]}
+                      </button>
+                      {/* CORREGIDO: Usando las mismas clases de fuente que los jugadores normales */}
+                      <span className="text-gray-200 text-[11px] md:text-sm truncate block">{match.bye}</span>
+                    </div>
                   </td>
                   <td className="py-3 px-1 md:py-4 md:px-2 text-center">
                     <span className="bg-gray-800 text-gray-500 text-[8px] md:text-[10px] px-1 md:px-2 py-0.5 md:py-1 rounded font-bold">BYE</span>
