@@ -308,7 +308,7 @@ function App() {
             ) : (
               <>
                 <h2 className="text-xl font-bold text-white mb-4">Premio de Belleza</h2>
-                <p className="text-sm text-pink-200 italic mb-4">Aquí premiaremos a la partida más besha de todo el torneo.</p>
+                <p className="text-sm text-pink-200 italic mb-4">Aquí premiaremos a la chica digo a la partida más linda de todo el torneo.</p>
                 <ul className="space-y-2 text-sm text-gray-300">
                   <li><strong className="text-pink-300">Monto:</strong> El ganador de la votación se lleva 400 varos.</li>
                   <li><strong className="text-pink-300">Propuestas:</strong> Cada jugador puede proponer a lo más 1 partida suya y a lo más 1 de alguien más.</li>
