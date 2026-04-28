@@ -107,20 +107,16 @@ function App() {
   const handleProposeGame = async (gameData) => {
     // 1. VALIDACIÓN DE DUPLICADOS
     const isDuplicate = beautyGames.some(g => {
-      // Ignoramos la partida actual si estamos en modo edición
       if (editingBeautyGame && g.link === editingBeautyGame.link) {
         return false;
       }
-      
       const sameLink = g.link.trim() === gameData.link.trim();
-      // En un round robin, la misma combinación de blancas y negras significa que es la misma partida
       const sameMatchup = g.white === gameData.white && g.black === gameData.black;
-      
       return sameLink || sameMatchup;
     });
 
     if (isDuplicate) {
-      alert("¡Esta partida ya fue propuesta al Premio de Belleza!");
+      alert("¡Esta partida ya fue propuesta al Premio de Belleza! Verifica el link o los jugadores.");
       return; 
     }
 
@@ -278,6 +274,8 @@ function App() {
   };
 
   const isBeautyView = currentView === 'Premio de Belleza';
+  // NUEVA VARIABLE: Mostrar la opción de Premio de Belleza a partir de la Ronda 7 (1 de Junio)
+  const showBeautyPrizeOption = getMexicoDate() >= new Date('2026-06-01T00:00:00');
 
   return (
     <div className="min-h-screen bg-[#121212] text-gray-200 p-2 md:p-6 font-sans">
@@ -376,7 +374,10 @@ function App() {
                 {Object.keys(tournamentPairings).sort((a, b) => parseInt(a.replace('Ronda ', '')) - parseInt(b.replace('Ronda ', ''))).map(ronda => (
                   <option key={ronda} value={ronda} className="bg-[#1a1a1a]">{ronda}</option>
                 ))}
-                <option value="Premio de Belleza" className="bg-[#1a1a1a]">Premio de Belleza</option>
+                {/* RENDERIZADO CONDICIONAL DE LA OPCIÓN */}
+                {showBeautyPrizeOption && (
+                  <option value="Premio de Belleza" className="bg-[#1a1a1a]">Premio de Belleza</option>
+                )}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-blue-400"><svg className="fill-current h-4 w-4" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div>
             </div>
