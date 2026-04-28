@@ -56,7 +56,7 @@ const SubmitResultModal = ({ isOpen, onClose, currentRound, pairings, onSave }) 
                 if (match.bye) return null;
                 return (
                   <option key={index} value={index}>
-                    Blancas: {match.white} vs Negras: {match.black}
+                    {match.white} vs {match.black}
                   </option>
                 );
               })}
