@@ -105,6 +105,26 @@ function App() {
   };
 
   const handleProposeGame = async (gameData) => {
+    // 1. VALIDACIÓN DE DUPLICADOS
+    const isDuplicate = beautyGames.some(g => {
+      // Ignoramos la partida actual si estamos en modo edición
+      if (editingBeautyGame && g.link === editingBeautyGame.link) {
+        return false;
+      }
+      
+      const sameLink = g.link.trim() === gameData.link.trim();
+      // En un round robin, la misma combinación de blancas y negras significa que es la misma partida
+      const sameMatchup = g.white === gameData.white && g.black === gameData.black;
+      
+      return sameLink || sameMatchup;
+    });
+
+    if (isDuplicate) {
+      alert("¡Esta partida ya fue propuesta al Premio de Belleza!");
+      return; 
+    }
+
+    // 2. VALIDACIÓN DE LÍMITE DE PROPUESTAS
     const otherGamesByProposer = editingBeautyGame 
       ? beautyGames.filter(g => g.proposer === gameData.proposer && g.link !== editingBeautyGame.link)
       : beautyGames.filter(g => g.proposer === gameData.proposer);
@@ -131,16 +151,15 @@ function App() {
       return; 
     }
 
+    // 3. GUARDADO DE LA PARTIDA
     let updatedGames;
     if (editingBeautyGame) {
       updatedGames = beautyGames.map(g => 
         g.link === editingBeautyGame.link 
-          // Conservamos los arrays de votos individuales al editar
           ? { ...gameData, votesR1: g.votesR1 || [], votesR2: g.votesR2 || [], votesFinal: g.votesFinal || [] } 
           : g
       );
     } else {
-      // NUEVA ESTRUCTURA: Arrays separados por etapa
       updatedGames = [...beautyGames, { ...gameData, votesR1: [], votesR2: [], votesFinal: [] }];
     }
     setBeautyGames(updatedGames);
@@ -161,11 +180,8 @@ function App() {
     setShowProposeModal(true);
   };
 
-  // VALIDACIÓN DE VOTOS (Por etapa)
   const handleLikeGame = async (gameObj, userInitial) => {
-    // Determinamos el array de votos activo según la sub-vista
     const activeVoteField = beautySubView === 'Final' ? 'votesFinal' : beautySubView === 'Ronda 2' ? 'votesR2' : 'votesR1';
-    // Aseguramos que el array exista
     const currentVotes = gameObj[activeVoteField] || []; 
     const isLiking = !currentVotes.includes(userInitial);
     
@@ -179,8 +195,6 @@ function App() {
         return;
       }
 
-      // Filtramos las partidas que se muestran en la etapa actual y contamos los votos del usuario
-      // (La vista ya se encarga de filtrar qué partidas aplican, así que iteramos sobre beautyGames con cuidado)
       const userLikesInRound = beautyGames.filter(g => (g[activeVoteField] || []).includes(userInitial)).length;
       
       let maxLikes = 3;
@@ -385,7 +399,7 @@ function App() {
           )}
         </div>
 
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto"> 
           <div className={`mt-4 ${!isBeautyView ? 'bg-[#1a1a1a] border border-gray-800 rounded-lg shadow-xl overflow-hidden' : 'px-2 md:px-0'}`}>
             {currentView === 'Premio de Belleza' ? (
               <BeautyPrizeView 
