@@ -1,11 +1,40 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDelete }) => {
   const [activeLikeMenu, setActiveLikeMenu] = useState(null);
   const [iframeScale, setIframeScale] = useState(1);
   const cardRefs = useRef([]);
 
-  const filteredGames = games.filter(g => g.round === currentSubView);
+  // LÓGICA DE AVANCE AUTOMÁTICO
+  const filteredGames = useMemo(() => {
+    // 1. Ronda 1: Pasan todas las propuestas.
+    if (currentSubView === 'Ronda 1') return games;
+
+    // Partidas que lograron llegar a Ronda 2 (3 o más votos en R1)
+    const gamesInRonda2 = games.filter(g => g.votesR1 && g.votesR1.length >= 3);
+
+    // 2. Ronda 2: Mostrar las que pasaron la R1
+    if (currentSubView === 'Ronda 2') {
+      return gamesInRonda2;
+    }
+
+    // 3. Final: Las 2 con más votos en R2, PERO solo si hay 10+ votos totales en R2
+    if (currentSubView === 'Final') {
+      // Calculamos cuántos votos totales se han dado en la Ronda 2
+      const totalVotesInR2 = gamesInRonda2.reduce((total, g) => total + (g.votesR2?.length || 0), 0);
+
+      // Si no se han juntado 10 votos en total, nadie pasa a la final todavía
+      if (totalVotesInR2 < 10) {
+        return [];
+      }
+
+      // Si ya hay 10 o más votos, pasamos a las 2 mejores
+      return [...gamesInRonda2]
+        .sort((a, b) => (b.votesR2?.length || 0) - (a.votesR2?.length || 0)) 
+        .slice(0, 2); 
+    }
+    return [];
+  }, [games, currentSubView]);
 
   useEffect(() => {
     const updateScale = () => {
@@ -20,7 +49,7 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
     updateScale();
     window.addEventListener('resize', updateScale);
     return () => window.removeEventListener('resize', updateScale);
-  }, []);
+  }, [filteredGames]);
 
   const getLichessEmbedUrl = (link) => {
     const match = link.match(/lichess\.org\/(?:embed\/)?([a-zA-Z0-9]{8,12})/);
@@ -34,60 +63,46 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
   return (
     <div className="space-y-8">
       {filteredGames.length === 0 ? (
-        <p className="text-center text-gray-500 py-10 italic">Aún no hay partidas propuestas para esta ronda...</p>
+        <p className="text-center text-gray-500 py-10 italic">
+          {currentSubView === 'Ronda 1' 
+            ? 'Aún no hay partidas propuestas...' 
+            : currentSubView === 'Final'
+              ? 'Aún no hay partidas clasificadas (se requieren al menos 10 votos totales en la Ronda 2)...'
+              : 'Aún no hay partidas clasificadas para esta etapa...'}
+        </p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {filteredGames.map((game, index) => {
-            // LÓGICA DE RESALTADO DEL GANADOR
             const whiteWon = game.result === '1 - 0';
             const blackWon = game.result === '0 - 1';
             const isDraw = game.result === '½ - ½';
 
-            const whiteClasses = whiteWon 
-              ? "font-extrabold text-white" 
-              : isDraw ? "font-bold text-gray-300" : "font-normal text-gray-500";
-              
-            const blackClasses = blackWon 
-              ? "font-extrabold text-white" 
-              : isDraw ? "font-bold text-gray-300" : "font-normal text-gray-500";
+            // Identificar qué array de votos usar en la UI
+            const activeVoteField = currentSubView === 'Final' ? 'votesFinal' : currentSubView === 'Ronda 2' ? 'votesR2' : 'votesR1';
+            const currentVotes = game[activeVoteField] || [];
 
             return (
-              <div
-                key={index}
-                ref={el => cardRefs.current[index] = el}
-                className="bg-[#151515] border border-gray-800 rounded-xl overflow-hidden shadow-2xl flex flex-col"
-              >
-                
+              <div key={index} ref={el => cardRefs.current[index] = el} className="bg-[#151515] border border-gray-800 rounded-xl overflow-hidden shadow-2xl flex flex-col">
                 <div className="flex justify-between items-start p-3 bg-[#1a1a1a] border-b border-gray-800 min-h-[56px]">
                   <div className="flex items-start gap-2 flex-1 pr-2">
                     <div className="relative shrink-0">
-                      <button 
-                        onClick={() => setActiveLikeMenu(activeLikeMenu === index ? null : index)}
-                        className="p-1.5 rounded-full hover:bg-gray-800 transition-colors"
-                        title="Votar por esta partida"
-                      >
+                      <button onClick={() => setActiveLikeMenu(activeLikeMenu === index ? null : index)} className="p-1.5 rounded-full hover:bg-gray-800 transition-colors" title="Votar por esta partida">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-blue-400/70 hover:text-blue-400">
                           <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                         </svg>
                       </button>
-
                       {activeLikeMenu === index && (
                         <div className="absolute left-0 mt-2 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-xl p-2 flex flex-wrap gap-2 w-48 z-20">
                           {Object.values(players).map((p, i) => (
-                            <button 
-                              key={i}
-                              onClick={() => { onLike(game, p.inicial); setActiveLikeMenu(null); }}
-                              className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-[10px] font-bold text-gray-300 border border-gray-600 transition-colors"
-                            >
+                            <button key={i} onClick={() => { onLike(game, p.inicial); setActiveLikeMenu(null); }} className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-[10px] font-bold text-gray-300 border border-gray-600 transition-colors">
                               {p.inicial}
                             </button>
                           ))}
                         </div>
                       )}
                     </div>
-
                     <div className="flex flex-wrap gap-1 items-center mt-1">
-                      {game.likes && game.likes.map((inicial, i) => (
+                      {currentVotes.map((inicial, i) => (
                         <div key={i} className="relative flex items-center justify-center w-6 h-6" title={`Voto de ${inicial}`}>
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute inset-0 w-6 h-6 text-blue-400/60">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -97,7 +112,6 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
                       ))}
                     </div>
                   </div>
-
                   <div className="flex gap-4 shrink-0 items-center mt-1.5">
                     <button onClick={() => onEdit(game)} className="text-gray-500 hover:text-blue-400 transition-colors" title="Editar">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -112,42 +126,20 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
                     </button>
                   </div>
                 </div>
-
-                <div
-                  className="w-full bg-[#121212] overflow-hidden relative"
-                  style={{ height: `${480 * iframeScale}px` }}
-                >
+                <div className="w-full bg-[#121212] overflow-hidden relative" style={{ height: `${480 * iframeScale}px` }}>
                   {getLichessEmbedUrl(game.link) ? (
-                    <div 
-                      className="absolute inset-0 flex items-start justify-center overflow-hidden"
-                      >
-                      <iframe 
-                          src={getLichessEmbedUrl(game.link)} 
-                          frameBorder="0" 
-                          className="pointer-events-auto"
-                          style={{
-                          zoom: iframeScale,
-                          width: '390px',
-                          height: '480px',
-                          marginLeft: iframeScale < 1 ? '10px' : '0px',
-                          }}
-                      />
-                      </div>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">Link no válido</div>
-                  )}
+                    <div className="absolute inset-0 flex items-start justify-center overflow-hidden">
+                      <iframe src={getLichessEmbedUrl(game.link)} frameBorder="0" className="pointer-events-auto" style={{ zoom: iframeScale, width: '390px', height: '480px', marginLeft: iframeScale < 1 ? '10px' : '0px' }} />
+                    </div>
+                  ) : <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">Link no válido</div>}
                 </div>
-
                 <div className="p-4 bg-[#1a1a1a] mt-auto">
                   <div className="flex justify-between items-center border-b border-gray-800 pb-2 mb-2">
-                    {/* APLICACIÓN DE CLASES DINÁMICAS */}
-                    <span className={`text-sm transition-colors ${whiteClasses}`}>⚪ {game.white}</span>
+                    <span className={`text-sm ${whiteWon ? 'font-extrabold text-white' : isDraw ? 'font-bold text-gray-300' : 'text-gray-500'}`}>⚪ {game.white}</span>
                     <span className="font-mono text-xs text-gray-400">{game.result}</span>
-                    <span className={`text-sm transition-colors ${blackClasses}`}>⚫ {game.black}</span>
+                    <span className={`text-sm ${blackWon ? 'font-extrabold text-white' : isDraw ? 'font-bold text-gray-300' : 'text-gray-500'}`}>⚫ {game.black}</span>
                   </div>
-                  <div className="text-right text-[10px] text-pink-300/60 italic">
-                    Propuesta por: {game.proposer}
-                  </div>
+                  <div className="text-right text-[10px] text-pink-300/60 italic">Propuesta por: {game.proposer}</div>
                 </div>
               </div>
             );

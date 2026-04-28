@@ -65,7 +65,6 @@ function App() {
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [editingBeautyGame, setEditingBeautyGame] = useState(null);
 
-  // LIMPIEZA DE DATOS (Fer Vásquez)
   const cleanOldNames = (data) => {
     const raw = JSON.stringify(data);
     const cleaned = raw.replace(/Fernando Vasquez/g, "Fer Vásquez");
@@ -105,7 +104,6 @@ function App() {
     setEditingBeautyGame(null);
   };
 
-  // VALIDACIÓN DE POSTULACIONES
   const handleProposeGame = async (gameData) => {
     const otherGamesByProposer = editingBeautyGame 
       ? beautyGames.filter(g => g.proposer === gameData.proposer && g.link !== editingBeautyGame.link)
@@ -137,11 +135,13 @@ function App() {
     if (editingBeautyGame) {
       updatedGames = beautyGames.map(g => 
         g.link === editingBeautyGame.link 
-          ? { ...gameData, likes: g.likes, round: g.round } 
+          // Conservamos los arrays de votos individuales al editar
+          ? { ...gameData, votesR1: g.votesR1 || [], votesR2: g.votesR2 || [], votesFinal: g.votesFinal || [] } 
           : g
       );
     } else {
-      updatedGames = [...beautyGames, { ...gameData, likes: [], round: beautySubView }];
+      // NUEVA ESTRUCTURA: Arrays separados por etapa
+      updatedGames = [...beautyGames, { ...gameData, votesR1: [], votesR2: [], votesFinal: [] }];
     }
     setBeautyGames(updatedGames);
     await setDoc(doc(db, "torneo", "premioBelleza"), { games: updatedGames });
@@ -161,9 +161,13 @@ function App() {
     setShowProposeModal(true);
   };
 
-  // VALIDACIÓN DE VOTOS
+  // VALIDACIÓN DE VOTOS (Por etapa)
   const handleLikeGame = async (gameObj, userInitial) => {
-    const isLiking = !gameObj.likes.includes(userInitial);
+    // Determinamos el array de votos activo según la sub-vista
+    const activeVoteField = beautySubView === 'Final' ? 'votesFinal' : beautySubView === 'Ronda 2' ? 'votesR2' : 'votesR1';
+    // Aseguramos que el array exista
+    const currentVotes = gameObj[activeVoteField] || []; 
+    const isLiking = !currentVotes.includes(userInitial);
     
     if (isLiking) {
       const playerNameByInitial = Object.keys(players).find(p => players[p].inicial === userInitial);
@@ -175,8 +179,9 @@ function App() {
         return;
       }
 
-      const currentRoundGames = beautyGames.filter(g => g.round === beautySubView);
-      const userLikesInRound = currentRoundGames.filter(g => g.likes.includes(userInitial)).length;
+      // Filtramos las partidas que se muestran en la etapa actual y contamos los votos del usuario
+      // (La vista ya se encarga de filtrar qué partidas aplican, así que iteramos sobre beautyGames con cuidado)
+      const userLikesInRound = beautyGames.filter(g => (g[activeVoteField] || []).includes(userInitial)).length;
       
       let maxLikes = 3;
       if (beautySubView === 'Ronda 2') maxLikes = 2;
@@ -190,11 +195,13 @@ function App() {
 
     const updatedGames = beautyGames.map(g => {
       if (g.link === gameObj.link) {
-        if (g.likes.includes(userInitial)) {
-          return { ...g, likes: g.likes.filter(initial => initial !== userInitial) };
-        } else {
-          return { ...g, likes: [...g.likes, userInitial] };
-        }
+        const gVotes = g[activeVoteField] || [];
+        return {
+           ...g,
+           [activeVoteField]: gVotes.includes(userInitial) 
+             ? gVotes.filter(initial => initial !== userInitial) 
+             : [...gVotes, userInitial]
+        };
       }
       return g;
     });
@@ -263,7 +270,6 @@ function App() {
       
       <div className="max-w-5xl mx-auto mb-10 flex flex-col items-center text-center">
         
-        {/* CORRECCIÓN: Traslación artificial a la izquierda (-translate-x-4 md:-translate-x-6) SOLO en Premio de Belleza */}
        <div className={`flex items-center justify-center gap-4 mb-4 w-full ${isBeautyView ? 'relative translate-x-9 md:translate-x-0' : ''}`}>
           <img 
             src={isBeautyView ? missUniversePic : tournamentLogo} 
@@ -330,7 +336,6 @@ function App() {
 
       <div className="max-w-5xl mx-auto border-t border-gray-800 pt-6">
         
-        {/* CORRECCIÓN: Párrafo original restaurado (flex-col md:flex-row) */}
         <p className="text-sm text-gray-400 mb-8 font-light leading-relaxed text-center flex flex-col md:flex-row items-center justify-center gap-4">
           <span className="text-center md:text-right text-white md:whitespace-nowrap">
             {isBeautyView ? getBeautyInstructions() : 'El ganador sube el resultado y el árbitro (Ferny) verifica. Los resultados se publicarán en la Tabla General.'}
@@ -380,7 +385,7 @@ function App() {
           )}
         </div>
 
-        <div className="max-w-5xl mx-auto"> {/* Este asegura que nada se pase del ancho del header */}
+        <div className="max-w-5xl mx-auto">
           <div className={`mt-4 ${!isBeautyView ? 'bg-[#1a1a1a] border border-gray-800 rounded-lg shadow-xl overflow-hidden' : 'px-2 md:px-0'}`}>
             {currentView === 'Premio de Belleza' ? (
               <BeautyPrizeView 
