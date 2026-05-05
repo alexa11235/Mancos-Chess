@@ -11,7 +11,8 @@ import tournamentLogo from './assets/mancos.jpg';
 import groupPic from './assets/group.jpg';
 import groupLegendPic from './assets/groupwlegend.jpg'; 
 import missUniversePic from './assets/missuniverse.jpg'; 
-import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+// IMPORTANTE: Agregamos onSnapshot a la lista de importaciones de Firebase
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase'; 
 
 function App() {
@@ -71,19 +72,34 @@ function App() {
     return JSON.parse(cleaned);
   };
 
+  // MAGIA EN TIEMPO REAL APLICADA AQUÍ: Reemplazamos getDoc por onSnapshot
   useEffect(() => {
-    const fetchData = async () => {
-      const docRef = doc(db, "torneo", "resultados");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) setTournamentPairings(cleanOldNames(docSnap.data()));
-      else await setDoc(docRef, initialPairings);
+    const docRefResultados = doc(db, "torneo", "resultados");
+    const docRefBelleza = doc(db, "torneo", "premioBelleza");
 
-      const beautyRef = doc(db, "torneo", "premioBelleza");
-      const beautySnap = await getDoc(beautyRef);
-      if (beautySnap.exists()) setBeautyGames(cleanOldNames(beautySnap.data().games || []));
-      else await setDoc(beautyRef, { games: [] });
+    // Escuchador en tiempo real para la tabla general y rondas
+    const unsubscribeResultados = onSnapshot(docRefResultados, async (docSnap) => {
+      if (docSnap.exists()) {
+        setTournamentPairings(cleanOldNames(docSnap.data()));
+      } else {
+        await setDoc(docRefResultados, initialPairings);
+      }
+    });
+
+    // Escuchador en tiempo real para las cartas del premio de belleza
+    const unsubscribeBelleza = onSnapshot(docRefBelleza, async (beautySnap) => {
+      if (beautySnap.exists()) {
+        setBeautyGames(cleanOldNames(beautySnap.data().games || []));
+      } else {
+        await setDoc(docRefBelleza, { games: [] });
+      }
+    });
+
+    // Limpieza de los listeners cuando el componente se desmonta (buena práctica)
+    return () => {
+      unsubscribeResultados();
+      unsubscribeBelleza();
     };
-    fetchData();
   }, []);
 
   const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
@@ -95,7 +111,7 @@ function App() {
       updatedPairings[ronda][matchIndex].resultado = resultado;
       if (gameLink && gameLink.trim() !== '') updatedPairings[ronda][matchIndex].gameLink = gameLink.trim();
     }
-    setTournamentPairings(updatedPairings);
+    // OJO: Ya no hacemos setTournamentPairings aquí manualmente. onSnapshot lo hará por nosotros en cuanto Firebase se actualice.
     await setDoc(doc(db, "torneo", "resultados"), updatedPairings);
   };
 
@@ -105,11 +121,8 @@ function App() {
   };
 
   const handleProposeGame = async (gameData) => {
-    // 1. VALIDACIÓN DE DUPLICADOS
     const isDuplicate = beautyGames.some(g => {
-      if (editingBeautyGame && g.link === editingBeautyGame.link) {
-        return false;
-      }
+      if (editingBeautyGame && g.link === editingBeautyGame.link) return false;
       const sameLink = g.link.trim() === gameData.link.trim();
       const sameMatchup = g.white === gameData.white && g.black === gameData.black;
       return sameLink || sameMatchup;
@@ -120,7 +133,6 @@ function App() {
       return; 
     }
 
-    // 2. VALIDACIÓN DE LÍMITE DE PROPUESTAS
     const otherGamesByProposer = editingBeautyGame 
       ? beautyGames.filter(g => g.proposer === gameData.proposer && g.link !== editingBeautyGame.link)
       : beautyGames.filter(g => g.proposer === gameData.proposer);
@@ -129,11 +141,8 @@ function App() {
     let othersGamesProposed = 0;
 
     otherGamesByProposer.forEach(g => {
-      if (g.white === g.proposer || g.black === g.proposer) {
-        ownGamesProposed++;
-      } else {
-        othersGamesProposed++;
-      }
+      if (g.white === g.proposer || g.black === g.proposer) ownGamesProposed++;
+      else othersGamesProposed++;
     });
 
     const isProposingOwnGame = (gameData.white === gameData.proposer || gameData.black === gameData.proposer);
@@ -147,7 +156,6 @@ function App() {
       return; 
     }
 
-    // 3. GUARDADO DE LA PARTIDA
     let updatedGames;
     if (editingBeautyGame) {
       updatedGames = beautyGames.map(g => 
@@ -158,7 +166,7 @@ function App() {
     } else {
       updatedGames = [...beautyGames, { ...gameData, votesR1: [], votesR2: [], votesFinal: [] }];
     }
-    setBeautyGames(updatedGames);
+    // Igual que arriba: Firestore lo actualizará, nosotros solo enviamos el comando a la base de datos
     await setDoc(doc(db, "torneo", "premioBelleza"), { games: updatedGames });
     closeProposeModal(); 
   };
@@ -166,7 +174,6 @@ function App() {
   const handleDeleteBeautyGame = async (gameToDelete) => {
     if (window.confirm("¿Estás seguro de que deseas borrar esta partida?")) {
       const updatedGames = beautyGames.filter(g => g.link !== gameToDelete.link);
-      setBeautyGames(updatedGames);
       await setDoc(doc(db, "torneo", "premioBelleza"), { games: updatedGames });
     }
   };
@@ -215,7 +222,6 @@ function App() {
       }
       return g;
     });
-    setBeautyGames(updatedGames);
     await setDoc(doc(db, "torneo", "premioBelleza"), { games: updatedGames });
   };
 
@@ -259,22 +265,22 @@ function App() {
     );
   };
 
+  // ACTUALIZADO: Movimos la ronda conjunta a la 6
   const roundDates = {
     'Ronda 1': '20 al 26 de Abril',
     'Ronda 2': '27 de Abril al 03 de Mayo',
     'Ronda 3': '4 al 10 de Mayo',
-    'Ronda 4': '11 al 17 de Mayo (Ronda conjunta)',
+    'Ronda 4': '11 al 17 de Mayo', 
     'Ronda 5': '18 al 24 de Mayo',
-    'Ronda 6': '25 al 31 de Mayo',
+    'Ronda 6': '25 al 31 de Mayo (Ronda conjunta)',
     'Ronda 7': '1 al 7 de Junio',
     'Ronda 8': '8 al 14 de Junio',
-    'Ronda 9': '15 al 21 de Junio (Ronda conjunta)',
+    'Ronda 9': '15 al 21 de Junio',
     'Tabla General': '',
     'Premio de Belleza': ''
   };
 
   const isBeautyView = currentView === 'Premio de Belleza';
-  // NUEVA VARIABLE: Mostrar la opción de Premio de Belleza a partir de la Ronda 7 (1 de Junio)
   const showBeautyPrizeOption = getMexicoDate() >= new Date('2026-06-01T00:00:00');
 
   return (
@@ -319,7 +325,8 @@ function App() {
                   <li><strong className="text-white">Sistema:</strong> Round Robin simple (una partida por semana).</li>
                   <li><strong className="text-white">Costo:</strong> Apuestas 100 varos por partida contra tu oponente cada ronda.</li>
                   <li><strong className="text-white">Premio de belleza:</strong> Aportación de 50 varos; el ganador se lleva 400.</li>
-                  <li><strong className="text-white">Modalidad:</strong> Se recomienda presencial. Las rondas 4 y 9 serán en conjunto, el resto se acuerda con el rival.</li>
+                  {/* REGLAMENTO ACTUALIZADO: Ahora dice que la ronda 6 es la conjunta */}
+                  <li><strong className="text-white">Modalidad:</strong> Se recomienda presencial. La ronda 6 será en conjunto, el resto se acuerda con el rival.</li>
                   <li><strong className="text-white">Equipo:</strong> Lleva tablero y reloj o la asosiación de mancos te cortará la otra mano.</li>
                 </ul>
               </>
@@ -374,7 +381,6 @@ function App() {
                 {Object.keys(tournamentPairings).sort((a, b) => parseInt(a.replace('Ronda ', '')) - parseInt(b.replace('Ronda ', ''))).map(ronda => (
                   <option key={ronda} value={ronda} className="bg-[#1a1a1a]">{ronda}</option>
                 ))}
-                {/* RENDERIZADO CONDICIONAL DE LA OPCIÓN */}
                 {showBeautyPrizeOption && (
                   <option value="Premio de Belleza" className="bg-[#1a1a1a]">Premio de Belleza</option>
                 )}
