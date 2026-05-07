@@ -276,7 +276,7 @@ function App() {
   const showBeautyPrizeOption = getMexicoDate() >= new Date('2026-06-01T00:00:00');
 
   return (
-    <div className="min-h-screen bg-[#121212] text-gray-200 p-2 md:p-6 font-sans md:[zoom:0.77]">
+    <div className="min-h-screen bg-[#121212] text-gray-200 p-2 md:p-6 font-sans md:[zoom:0.77] 2xl:[zoom:1]">
       
       <div className="max-w-5xl mx-auto mb-10 flex flex-col items-center text-center">
         
