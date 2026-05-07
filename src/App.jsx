@@ -276,7 +276,7 @@ function App() {
   const showBeautyPrizeOption = getMexicoDate() >= new Date('2026-06-01T00:00:00');
 
   return (
-    <div className="min-h-screen bg-[#121212] text-gray-200 p-2 md:p-6 font-sans">
+    <div className="min-h-screen bg-[#121212] text-gray-200 p-2 md:p-6 font-sans md:[zoom:0.77]">
       
       <div className="max-w-5xl mx-auto mb-10 flex flex-col items-center text-center">
         
@@ -287,14 +287,16 @@ function App() {
             onClick={!isBeautyView ? () => setShowEasterEgg(true) : undefined}
             className={`w-16 h-16 object-cover rounded-full border-2 ${isBeautyView ? 'border-pink-500/30' : 'border-gray-700'} shadow-lg shrink-0 ${!isBeautyView ? 'cursor-pointer' : 'cursor-default'}`}
           />
-          <h1 className={`text-4xl md:text-5xl font-extrabold tracking-tight text-left leading-tight ${isBeautyView ? 'text-pink-300' : 'text-white'}`}>
+          <h1 className={`text-4xl md:text-6xl font-extrabold tracking-tight text-left leading-tight ${isBeautyView ? 'text-pink-300' : 'text-white'}`}>
             {isBeautyView ? 'Premio de Belleza' : <><span className="hidden sm:inline">Torneo de Mancos</span><span className="sm:hidden">Torneo de<br/> Mancos</span></>}
           </h1>
         </div>
         
         <div className="flex gap-4">
-          <button onClick={() => setShowInfo(true)} className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded hover:bg-gray-800 transition-colors">
-            <span className="text-blue-400 font-bold px-2 rounded-full border border-blue-400 text-sm">i</span> INFO
+          <button onClick={() => setShowInfo(true)} className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded hover:bg-gray-800 transition-colors text-sm md:text-base">
+            {/* AQUÍ ESTÁ EL FIX: Le pusimos w-5 h-5 md:w-6 md:h-6 y flex items-center justify-center para forzar el círculo */}
+            <span className="text-blue-400 font-bold w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full border border-blue-400 text-sm md:text-base shrink-0">i</span> 
+            INFO
           </button>
         </div>
       </div>
@@ -312,7 +314,7 @@ function App() {
             {!isBeautyView ? (
               <>
                 <h2 className="text-xl font-bold text-white mb-4">Reglamento del Torneo de Mancos</h2>
-                <ul className="space-y-3 text-sm text-gray-300">
+                <ul className="space-y-3 text-sm md:text-base text-gray-300">
                   <li><strong className="text-white">Ritmo de juego:</strong> 60 minutos + 30 segundos de incremento.</li>
                   <li><strong className="text-white">Sistema:</strong> Round Robin simple (una partida por semana).</li>
                   <li><strong className="text-white">Costo:</strong> Apuestas 100 varos por partida contra tu oponente cada ronda.</li>
@@ -324,12 +326,12 @@ function App() {
             ) : (
               <>
                 <h2 className="text-xl font-bold text-white mb-4">Premio de Belleza</h2>
-                <p className="text-sm text-pink-200 italic mb-4">Aquí premiaremos a la chica digo a la partida más linda de todo el torneo.</p>
-                <ul className="space-y-2 text-sm text-gray-300">
+                <p className="text-sm md:text-base text-pink-200 italic mb-4">Aquí premiaremos a la chica digo a la partida más linda de todo el torneo.</p>
+                <ul className="space-y-2 text-sm md:text-base text-gray-300">
                   <li><strong className="text-pink-300">Premio:</strong> El ganador de la votación se lleva 400 varos.</li>
                   <li><strong className="text-pink-300">Propuestas:</strong> Cada jugador puede proponer a lo más 1 partida suya y a lo más 1 de alguien más.</li>
                   <li><strong className="text-pink-300">Votaciones: </strong> Se harán en 3 etapas eliminatorias.
-                    <ul className="list-disc pl-5 mt-1 text-xs space-y-1">
+                    <ul className="list-disc pl-5 mt-1 text-xs md:text-sm space-y-1">
                       <li><strong className="text-white">Ronda 1:</strong> 3 votos. No votas por partidas ganadas tuyas. Las de 3+ votos avanzan.</li>
                       <li><strong className="text-white">Ronda 2:</strong> 2 votos. Las 2 con más votos avanzan a la Final.</li>
                       <li><strong className="text-white">Final:</strong> 1 voto. Si ganaste una de las partidas en la final, no votas.</li>
@@ -339,21 +341,21 @@ function App() {
               </>
             )}
 
-            <button onClick={() => setShowInfo(false)} className="mt-6 w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors">Cerrar</button>
+            <button onClick={() => setShowInfo(false)} className="mt-6 w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors text-sm md:text-base">Cerrar</button>
           </div>
         </div>
       )}
 
       <div className="max-w-5xl mx-auto border-t border-gray-800 pt-6">
         
-        <p className="text-sm text-gray-400 mb-8 font-light leading-relaxed text-center flex flex-col md:flex-row items-center justify-center gap-4">
+        <p className="text-sm md:text-base text-gray-400 mb-8 font-light leading-relaxed text-center flex flex-col md:flex-row items-center justify-center gap-4">
           <span className="text-center md:text-right text-white md:whitespace-nowrap">
             {isBeautyView ? getBeautyInstructions() : 'El ganador sube el resultado y el árbitro (Ferny) verifica. Los resultados se publicarán en la Tabla General.'}
           </span>
           
           <span 
             onClick={() => isBeautyView ? openEditModal(null) : setShowSubmitModal(true)} 
-            className={`cursor-pointer font-medium tracking-wide inline-flex items-center gap-1.5 transition-colors border p-2 rounded-lg shrink-0 ${isBeautyView ? 'text-pink-400 border-pink-700/30 hover:bg-pink-900/20' : 'text-blue-400 border-blue-700/50 hover:bg-blue-900/30'}`}
+            className={`cursor-pointer font-medium tracking-wide inline-flex items-center gap-1.5 transition-colors border p-2 rounded-lg shrink-0 ${isBeautyView ? 'text-pink-400 border-pink-700/30 hover:bg-pink-900/20' : 'text-blue-400 border-blue-700/50 hover:bg-blue-900/30'} text-sm md:text-base`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
               <path d="M4 4h16"/><path d="M12 20V8"/><path d="m6 14 6-6 6 6"/>
@@ -366,8 +368,8 @@ function App() {
           
           <div className="flex flex-col gap-1 w-64">
             <div className="inline-block relative w-full">
-              <label className="absolute -top-2.5 left-3 bg-[#121212] px-1 text-[10px] uppercase tracking-widest text-blue-400 z-10">Vista</label>
-              <select value={currentView} onChange={(e) => setCurrentView(e.target.value)} className="w-full bg-transparent border border-blue-400/50 text-white p-3 rounded appearance-none focus:outline-none focus:ring-1 focus:ring-blue-400 cursor-pointer relative z-0 text-sm">
+              <label className="absolute -top-2.5 left-3 bg-[#121212] px-1 text-[10px] md:text-xs uppercase tracking-widest text-blue-400 z-10">Vista</label>
+              <select value={currentView} onChange={(e) => setCurrentView(e.target.value)} className="w-full bg-transparent border border-blue-400/50 text-white p-3 rounded appearance-none focus:outline-none focus:ring-1 focus:ring-blue-400 cursor-pointer relative z-0 text-sm md:text-base">
                 <option value="Tabla General" className="bg-[#1a1a1a]">Tabla General</option>
                 {Object.keys(tournamentPairings).sort((a, b) => parseInt(a.replace('Ronda ', '')) - parseInt(b.replace('Ronda ', ''))).map(ronda => (
                   <option key={ronda} value={ronda} className="bg-[#1a1a1a]">{ronda}</option>
@@ -376,23 +378,23 @@ function App() {
                   <option value="Premio de Belleza" className="bg-[#1a1a1a]">Premio de Belleza</option>
                 )}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-blue-400"><svg className="fill-current h-4 w-4" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-blue-400"><svg className="fill-current h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div>
             </div>
-            <span className="text-xs text-gray-500 italic ml-1">{roundDates[currentView]}</span>
+            <span className="text-xs md:text-sm text-gray-500 italic ml-1">{roundDates[currentView]}</span>
           </div>
 
           {isBeautyView && (
             <div className="flex flex-col gap-1 w-48">
               <div className="inline-block relative w-full">
-                <label className="absolute -top-2.5 left-3 bg-[#121212] px-1 text-[10px] uppercase tracking-widest text-pink-400 z-10">Etapa</label>
-                <select value={beautySubView} onChange={(e) => setBeautySubView(e.target.value)} className="w-full bg-transparent border border-pink-500/30 text-white p-3 rounded appearance-none focus:outline-none focus:border-pink-400 cursor-pointer relative z-0 text-sm">
+                <label className="absolute -top-2.5 left-3 bg-[#121212] px-1 text-[10px] md:text-xs uppercase tracking-widest text-pink-400 z-10">Etapa</label>
+                <select value={beautySubView} onChange={(e) => setBeautySubView(e.target.value)} className="w-full bg-transparent border border-pink-500/30 text-white p-3 rounded appearance-none focus:outline-none focus:border-pink-400 cursor-pointer relative z-0 text-sm md:text-base">
                   <option value="Ronda 1" className="bg-[#1a1a1a]">Ronda 1</option>
                   <option value="Ronda 2" className="bg-[#1a1a1a]">Ronda 2</option>
                   <option value="Final" className="bg-[#1a1a1a]">Final</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-pink-400"><svg className="fill-current h-4 w-4" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-pink-400"><svg className="fill-current h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div>
               </div>
-              <span className="text-xs text-transparent select-none">&nbsp;</span>
+              <span className="text-xs md:text-sm text-transparent select-none">&nbsp;</span>
             </div>
           )}
         </div>
