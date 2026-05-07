@@ -11,7 +11,6 @@ import tournamentLogo from './assets/mancos.jpg';
 import groupPic from './assets/group.jpg';
 import groupLegendPic from './assets/groupwlegend.jpg'; 
 import missUniversePic from './assets/missuniverse.jpg'; 
-// IMPORTANTE: Agregamos onSnapshot a la lista de importaciones de Firebase
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase'; 
 
@@ -72,12 +71,10 @@ function App() {
     return JSON.parse(cleaned);
   };
 
-  // MAGIA EN TIEMPO REAL APLICADA AQUÍ: Reemplazamos getDoc por onSnapshot
   useEffect(() => {
     const docRefResultados = doc(db, "torneo", "resultados");
     const docRefBelleza = doc(db, "torneo", "premioBelleza");
 
-    // Escuchador en tiempo real para la tabla general y rondas
     const unsubscribeResultados = onSnapshot(docRefResultados, async (docSnap) => {
       if (docSnap.exists()) {
         setTournamentPairings(cleanOldNames(docSnap.data()));
@@ -86,7 +83,6 @@ function App() {
       }
     });
 
-    // Escuchador en tiempo real para las cartas del premio de belleza
     const unsubscribeBelleza = onSnapshot(docRefBelleza, async (beautySnap) => {
       if (beautySnap.exists()) {
         setBeautyGames(cleanOldNames(beautySnap.data().games || []));
@@ -95,7 +91,6 @@ function App() {
       }
     });
 
-    // Limpieza de los listeners cuando el componente se desmonta (buena práctica)
     return () => {
       unsubscribeResultados();
       unsubscribeBelleza();
@@ -111,7 +106,6 @@ function App() {
       updatedPairings[ronda][matchIndex].resultado = resultado;
       if (gameLink && gameLink.trim() !== '') updatedPairings[ronda][matchIndex].gameLink = gameLink.trim();
     }
-    // OJO: Ya no hacemos setTournamentPairings aquí manualmente. onSnapshot lo hará por nosotros en cuanto Firebase se actualice.
     await setDoc(doc(db, "torneo", "resultados"), updatedPairings);
   };
 
@@ -166,7 +160,6 @@ function App() {
     } else {
       updatedGames = [...beautyGames, { ...gameData, votesR1: [], votesR2: [], votesFinal: [] }];
     }
-    // Igual que arriba: Firestore lo actualizará, nosotros solo enviamos el comando a la base de datos
     await setDoc(doc(db, "torneo", "premioBelleza"), { games: updatedGames });
     closeProposeModal(); 
   };
@@ -265,7 +258,6 @@ function App() {
     );
   };
 
-  // ACTUALIZADO: Movimos la ronda conjunta a la 6
   const roundDates = {
     'Ronda 1': '20 al 26 de Abril',
     'Ronda 2': '27 de Abril al 03 de Mayo',
@@ -275,7 +267,7 @@ function App() {
     'Ronda 6': '25 al 31 de Mayo (Ronda conjunta)',
     'Ronda 7': '1 al 7 de Junio',
     'Ronda 8': '8 al 14 de Junio',
-    'Ronda 9': '15 al 21 de Junio',
+    'Ronda 9': '15 al 21 de Junio (Ronda conjunta)',
     'Tabla General': '',
     'Premio de Belleza': ''
   };
@@ -325,8 +317,7 @@ function App() {
                   <li><strong className="text-white">Sistema:</strong> Round Robin simple (una partida por semana).</li>
                   <li><strong className="text-white">Costo:</strong> Apuestas 100 varos por partida contra tu oponente cada ronda.</li>
                   <li><strong className="text-white">Premio de belleza:</strong> Aportación de 50 varos; el ganador se lleva 400.</li>
-                  {/* REGLAMENTO ACTUALIZADO: Ahora dice que la ronda 6 es la conjunta */}
-                  <li><strong className="text-white">Modalidad:</strong> Se recomienda presencial. La ronda 6 será en conjunto, el resto se acuerda con el rival.</li>
+                  <li><strong className="text-white">Modalidad:</strong> Se recomienda presencial. Las rondas 6 y 9 serán en conjunto, el resto se acuerda con el rival.</li>
                   <li><strong className="text-white">Equipo:</strong> Lleva tablero y reloj o la asosiación de mancos te cortará la otra mano.</li>
                 </ul>
               </>
