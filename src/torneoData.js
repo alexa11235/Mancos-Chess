@@ -1,46 +1,55 @@
 export const players = {
   "Lalo Barajas": { 
     inicial: "L", 
+    foto: "/lalo.jpeg", 
     modalidad: ["Presencial sin carro", "En línea"], 
     disponibilidad: "Sábados y domingos; y entre semana podría empezar a las 7" 
   },
   "Carlos Imanol": { 
     inicial: "C", 
+    foto: "/Imanol.jpeg",
     modalidad: ["Presencial con carro", "En línea"], 
     disponibilidad: "Viernes, sábados y domingos después de las 5pm" 
   },
   "Fer Vásquez": { 
     inicial: "F", 
+    foto: "/Fer.jpeg",
     modalidad: ["Presencial con carro"], 
     disponibilidad: "Fines de semana, lunes o miercoles en la tarde noche." 
   },
   "Albert AA": { 
     inicial: "A", 
+    foto: "/Alberto.jpeg",
     modalidad: ["Presencial con carro"], 
     disponibilidad: "Domingos por la mañana" 
   },
   "Noé Santos": { 
     inicial: "N", 
+    foto: "/Noe.jpeg",
     modalidad: ["Presencial con carro"], 
     disponibilidad: "Cualquier día por las tardes menos" 
   },
   "Diego Pérez": { 
     inicial: "D", 
+    foto: "/Diego.jpeg",
     modalidad: ["Presencial con carro"], 
     disponibilidad: "Entre semana por la tarde" 
   },
   "Doc. Abraham": { 
     inicial: "Ab", 
+    foto: "/abraham.jpeg",
     modalidad: ["Presencial con carro"], 
     disponibilidad: "Lunes a viernes por las tarde" 
   },
   "Mike Alex": { 
     inicial: "M", 
+    foto: "/Alex.jpeg",
     modalidad: ["Presencial con carro", "En línea", "Casa de Noé"], 
     disponibilidad: "Sabados y Domingos, Entre semana por las tardes pero preferiria que sea los findes" 
   },
   "Ferny Barreda": { 
     inicial: "Fe", 
+    foto: "/Ferb.jpeg",
     modalidad: ["Presencial con carro", "En línea"], 
     disponibilidad: "Sábados por la tarde y domingos por la mañana." 
   },
