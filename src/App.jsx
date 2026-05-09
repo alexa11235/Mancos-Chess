@@ -350,7 +350,11 @@ function App() {
         
         <p className="text-sm md:text-base text-gray-400 mb-8 font-light leading-relaxed text-center flex flex-col md:flex-row items-center justify-center gap-4">
           <span className="text-center md:text-right text-white md:whitespace-nowrap">
-            {isBeautyView ? getBeautyInstructions() : 'El ganador sube el resultado y el árbitro (Ferny) verifica. Los resultados se publicarán en la Tabla General.'}
+            {isBeautyView ? (
+              getBeautyInstructions()
+            ) : (
+              <>El ganador sube el resultado y el árbitro (<span className="line-through decoration-double text-gray-500">Ferny</span> Albert) verifica. Los resultados se publicarán en la Tabla General.</>
+            )}
           </span>
           
           <span 
