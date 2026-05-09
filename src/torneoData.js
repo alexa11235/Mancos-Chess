@@ -78,30 +78,30 @@ export const pairings = {
     { bye: "Fer Vásquez" }
   ],
   "Ronda 4": [
-    { white: "Ferny Barreda", black: "Diego Pérez" },
+    { white: "Diego Pérez", black: "Ferny Barreda" },
     { white: "Doc. Abraham", black: "Carlos Imanol" },
-    { white: "Noé Santos", black: "Fer Vásquez" },
+    { white: "Fer Vásquez", black: "Noé Santos" },
     { white: "Mike Alex", black: "Lalo Barajas" },
     { bye: "Albert AA" }
   ],
   "Ronda 5": [
-    { white: "Lalo Barajas", black: "Ferny Barreda" },
+    { white: "Ferny Barreda", black: "Lalo Barajas" },
     { white: "Diego Pérez", black: "Doc. Abraham" },
-    { white: "Albert AA", black: "Noé Santos" },
+    { white: "Noé Santos", black: "Albert AA" },
     { white: "Carlos Imanol", black: "Fer Vásquez" },
     { bye: "Mike Alex" }
   ],
   "Ronda 6": [
     { white: "Doc. Abraham", black: "Ferny Barreda" },
-    { white: "Noé Santos", black: "Mike Alex" },
+    { white: "Mike Alex", black: "Noé Santos" },
     { white: "Fer Vásquez", black: "Diego Pérez" },
-    { white: "Carlos Imanol", black: "Albert AA" },
+    { white: "Albert AA", black: "Carlos Imanol" },
     { bye: "Lalo Barajas" }
   ],
   "Ronda 7": [
     { white: "Lalo Barajas", black: "Doc. Abraham" },
     { white: "Ferny Barreda", black: "Fer Vásquez" },
-    { white: "Mike Alex", black: "Carlos Imanol" },
+    { white: "Carlos Imanol", black: "Mike Alex" },
     { white: "Diego Pérez", black: "Albert AA" },
     { bye: "Noé Santos" }
   ],
@@ -109,12 +109,12 @@ export const pairings = {
     { white: "Noé Santos", black: "Lalo Barajas" },
     { white: "Fer Vásquez", black: "Doc. Abraham" },
     { white: "Albert AA", black: "Ferny Barreda" },
-    { white: "Diego Pérez", black: "Mike Alex" },
+    { white: "Mike Alex", black: "Diego Pérez" },
     { bye: "Carlos Imanol" }
   ],
   "Ronda 9": [
     { white: "Lalo Barajas", black: "Fer Vásquez" },
-    { white: "Noé Santos", black: "Carlos Imanol" },
+    { white: "Carlos Imanol", black: "Noé Santos" },
     { white: "Doc. Abraham", black: "Albert AA" },
     { white: "Ferny Barreda", black: "Mike Alex" },
     { bye: "Diego Pérez" }
