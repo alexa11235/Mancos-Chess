@@ -1,0 +1,210 @@
+{
+  "Ronda 4": [
+    {
+      "white": "Diego Pérez",
+      "black": "Ferny Barreda"
+    },
+    {
+      "black": "Carlos Imanol",
+      "white": "Doc. Abraham"
+    },
+    {
+      "white": "Fer Vásquez",
+      "black": "Noé Santos"
+    },
+    {
+      "white": "Mike Alex",
+      "black": "Lalo Barajas"
+    },
+    {
+      "bye": "Albert AA"
+    }
+  ],
+  "Ronda 9": [
+    {
+      "white": "Lalo Barajas",
+      "black": "Fer Vásquez"
+    },
+    {
+      "white": "Carlos Imanol",
+      "black": "Noé Santos"
+    },
+    {
+      "black": "Albert AA",
+      "white": "Doc. Abraham"
+    },
+    {
+      "black": "Mike Alex",
+      "white": "Ferny Barreda"
+    },
+    {
+      "bye": "Diego Pérez"
+    }
+  ],
+  "Ronda 3": [
+    {
+      "white": "Carlos Imanol",
+      "black": "Ferny Barreda",
+      "resultado": "1 - 0",
+      "gameLink": "https://lichess.org/XkCCQLo1"
+    },
+    {
+      "white": "Noé Santos",
+      "black": "Doc. Abraham",
+      "resultado": "0 - 1"
+    },
+    {
+      "white": "Lalo Barajas",
+      "black": "Diego Pérez",
+      "resultado": "1 - 0",
+      "gameLink": "https://lichess.org/9vQ3usb4"
+    },
+    {
+      "black": "Mike Alex",
+      "white": "Albert AA",
+      "resultado": "1 - 0"
+    },
+    {
+      "bye": "Fer Vásquez"
+    }
+  ],
+  "Ronda 7": [
+    {
+      "black": "Doc. Abraham",
+      "white": "Lalo Barajas"
+    },
+    {
+      "black": "Fer Vásquez",
+      "white": "Ferny Barreda"
+    },
+    {
+      "black": "Mike Alex",
+      "white": "Carlos Imanol"
+    },
+    {
+      "white": "Diego Pérez",
+      "black": "Albert AA"
+    },
+    {
+      "bye": "Noé Santos"
+    }
+  ],
+  "Ronda 2": [
+    {
+      "resultado": "1 - 0",
+      "black": "Noé Santos",
+      "white": "Ferny Barreda"
+    },
+    {
+      "white": "Albert AA",
+      "black": "Lalo Barajas",
+      "gameLink": "https://lichess.org/xMNBoHHZ",
+      "resultado": "0 - 1"
+    },
+    {
+      "gameLink": "https://lichess.org/OogiFsky/white",
+      "resultado": "0 - 1",
+      "white": "Diego Pérez",
+      "black": "Carlos Imanol"
+    },
+    {
+      "white": "Mike Alex",
+      "black": "Fer Vásquez",
+      "resultado": "0 - 1"
+    },
+    {
+      "bye": "Doc. Abraham"
+    }
+  ],
+  "Ronda 1": [
+    {
+      "gameLink": "https://lichess.org/69u64MgN",
+      "resultado": "1 - 0",
+      "white": "Lalo Barajas",
+      "black": "Carlos Imanol"
+    },
+    {
+      "black": "Albert AA",
+      "white": "Fer Vásquez",
+      "resultado": "0 - 1"
+    },
+    {
+      "white": "Noé Santos",
+      "black": "Diego Pérez",
+      "resultado": "0 - 1",
+      "gameLink": "https://lichess.org/12CnA66O"
+    },
+    {
+      "resultado": "0 - 1",
+      "gameLink": "https://www.chess.com/analysis/collection/torneodemancos2026-2D4smmaB8/5qenTuPpKp/analysis",
+      "black": "Mike Alex",
+      "white": "Doc. Abraham"
+    },
+    {
+      "bye": "Ferny Barreda"
+    }
+  ],
+  "Ronda 8": [
+    {
+      "black": "Lalo Barajas",
+      "white": "Noé Santos"
+    },
+    {
+      "black": "Doc. Abraham",
+      "white": "Fer Vásquez"
+    },
+    {
+      "white": "Albert AA",
+      "black": "Ferny Barreda"
+    },
+    {
+      "white": "Mike Alex",
+      "black": "Diego Pérez"
+    },
+    {
+      "bye": "Carlos Imanol"
+    }
+  ],
+  "Ronda 5": [
+    {
+      "black": "Lalo Barajas",
+      "white": "Ferny Barreda"
+    },
+    {
+      "white": "Diego Pérez",
+      "black": "Doc. Abraham"
+    },
+    {
+      "white": "Noé Santos",
+      "black": "Albert AA"
+    },
+    {
+      "white": "Carlos Imanol",
+      "black": "Fer Vásquez"
+    },
+    {
+      "bye": "Mike Alex"
+    }
+  ],
+  "Ronda 6": [
+    {
+      "white": "Doc. Abraham",
+      "black": "Ferny Barreda"
+    },
+    {
+      "white": "Mike Alex",
+      "black": "Noé Santos"
+    },
+    {
+      "white": "Fer Vásquez",
+      "black": "Diego Pérez"
+    },
+    {
+      "white": "Albert AA",
+      "black": "Carlos Imanol"
+    },
+    {
+      "bye": "Lalo Barajas"
+    }
+  ]
+}

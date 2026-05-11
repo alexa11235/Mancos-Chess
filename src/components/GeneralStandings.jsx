@@ -11,16 +11,17 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
 
     const today = getMexicoDate();
     
-    const roundSchedule = {
-      'Ronda 1': new Date('2026-04-20T00:00:00'),
-      'Ronda 2': new Date('2026-04-27T00:00:00'),
-      'Ronda 3': new Date('2026-05-04T00:00:00'),
-      'Ronda 4': new Date('2026-05-11T00:00:00'),
-      'Ronda 5': new Date('2026-05-18T00:00:00'),
-      'Ronda 6': new Date('2026-05-25T00:00:00'),
-      'Ronda 7': new Date('2026-06-01T00:00:00'),
-      'Ronda 8': new Date('2026-06-08T00:00:00'),
-      'Ronda 9': new Date('2026-06-15T00:00:00'),
+    // Nuevo calendario de Miércoles: Define cuándo se "libera" el punto del BYE
+    const byeSchedule = {
+      'Ronda 1': new Date('2026-04-22T00:00:00'),
+      'Ronda 2': new Date('2026-04-29T00:00:00'),
+      'Ronda 3': new Date('2026-05-06T00:00:00'),
+      'Ronda 4': new Date('2026-05-13T00:00:00'),
+      'Ronda 5': new Date('2026-05-20T00:00:00'),
+      'Ronda 6': new Date('2026-05-27T00:00:00'),
+      'Ronda 7': new Date('2026-06-03T00:00:00'),
+      'Ronda 8': new Date('2026-06-10T00:00:00'),
+      'Ronda 9': new Date('2026-06-17T00:00:00'),
     };
 
     const stats = {};
@@ -35,17 +36,18 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
     });
 
     Object.entries(pairings).forEach(([roundName, roundMatches]) => {
-      const roundStarted = today >= roundSchedule[roundName];
+      // Verificamos si ya es miércoles o posterior para esta ronda específica
+      const isByeActive = today >= byeSchedule[roundName];
 
       roundMatches.forEach(match => {
-        // PARCHE DE SEGURIDAD: Convertir el nombre viejo al nuevo por si viene de Firebase
-        const byePlayer = match.bye === "Fernando Vasquez" ? "Fer Vasquez" : match.bye;
-        const w = match.white === "Fernando Vasquez" ? "Fer Vasquez" : match.white;
-        const b = match.black === "Fernando Vasquez" ? "Fer Vasquez" : match.black;
+        // ADIÓS PARCHES: La base de datos está limpia, tomamos los nombres directos
+        const byePlayer = match.bye;
+        const w = match.white;
+        const b = match.black;
 
-        if (byePlayer && roundStarted) {
-          // Asegurarnos de que el jugador exista antes de sumarle puntos
-          if (stats[byePlayer]) {
+        if (byePlayer) {
+          // Solo sumamos el punto y el icono si la fecha del BYE ya se cumplió
+          if (isByeActive && stats[byePlayer]) {
             stats[byePlayer].puntos += 1;
             stats[byePlayer].totalByes += 1;
           }

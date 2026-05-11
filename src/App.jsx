@@ -65,19 +65,13 @@ function App() {
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [editingBeautyGame, setEditingBeautyGame] = useState(null);
 
-  const cleanOldNames = (data) => {
-    const raw = JSON.stringify(data);
-    const cleaned = raw.replace(/Fernando Vasquez/g, "Fer Vásquez");
-    return JSON.parse(cleaned);
-  };
-
   useEffect(() => {
     const docRefResultados = doc(db, "torneo", "resultados");
     const docRefBelleza = doc(db, "torneo", "premioBelleza");
 
     const unsubscribeResultados = onSnapshot(docRefResultados, async (docSnap) => {
       if (docSnap.exists()) {
-        setTournamentPairings(cleanOldNames(docSnap.data()));
+        setTournamentPairings(docSnap.data());
       } else {
         await setDoc(docRefResultados, initialPairings);
       }
@@ -85,7 +79,7 @@ function App() {
 
     const unsubscribeBelleza = onSnapshot(docRefBelleza, async (beautySnap) => {
       if (beautySnap.exists()) {
-        setBeautyGames(cleanOldNames(beautySnap.data().games || []));
+        setBeautyGames(beautySnap.data().games || []);
       } else {
         await setDoc(docRefBelleza, { games: [] });
       }
@@ -368,7 +362,7 @@ function App() {
           </span>
         </p>
 
-        <div className="mb-8 flex flex-col sm:flex-row gap-4 items-start">
+       <div className="mb-8 flex flex-col sm:flex-row gap-4 items-start w-full">
           
           <div className="flex flex-col gap-1 w-64">
             <div className="inline-block relative w-full">
@@ -401,6 +395,25 @@ function App() {
               <span className="text-xs md:text-sm text-transparent select-none">&nbsp;</span>
             </div>
           )}
+
+          <div 
+            className="w-10 h-10 ml-auto cursor-default bg-transparent"
+            onClick={() => {
+              if (window.confirm("¿Descargar respaldo de seguridad (JSON) de los resultados del torneo?")) {
+                const dataStr = JSON.stringify(tournamentPairings, null, 2);
+                const blob = new Blob([dataStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                const today = getMexicoDate().toISOString().split('T')[0];
+                link.download = `respaldo_mancos_${today}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
+            }}
+          ></div>
+
         </div>
 
         <div className="max-w-5xl mx-auto"> 
