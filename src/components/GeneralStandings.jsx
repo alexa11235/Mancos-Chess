@@ -77,9 +77,17 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
       });
     });
 
-    const sortedPlayers = Object.values(stats).sort((a, b) => b.puntos - a.puntos);
-    return { sortedPlayers };
-  }, [pairings, players]);
+  const sortedPlayers = Object.values(stats).sort((a, b) => {
+        // 1. Criterio principal: Quien tenga más puntos va primero
+        if (b.puntos !== a.puntos) {
+          return b.puntos - a.puntos;
+        }
+        // 2. Criterio de desempate: Si tienen los mismos puntos, el que tenga MENOS Byes va primero
+        return a.totalByes - b.totalByes;
+      });
+
+      return { sortedPlayers }; // <--- ¡Esta es la línea que te faltó!
+    }, [pairings, players]);
 
   const { sortedPlayers } = data;
 
