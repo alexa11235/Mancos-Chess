@@ -1,0 +1,220 @@
+{
+  "Ronda 1": [
+    {
+      "gameLink": "https://lichess.org/69u64MgN",
+      "resultado": "1 - 0",
+      "white": "Lalo Barajas",
+      "black": "Carlos Imanol"
+    },
+    {
+      "gameLink": "https://lichess.org/RwYvkDUL",
+      "resultado": "0 - 1",
+      "white": "Fer Vásquez",
+      "black": "Albert AA"
+    },
+    {
+      "resultado": "0 - 1",
+      "white": "Noé Santos",
+      "gameLink": "https://lichess.org/12CnA66O",
+      "black": "Diego Pérez"
+    },
+    {
+      "resultado": "0 - 1",
+      "gameLink": "https://www.chess.com/analysis/collection/torneodemancos2026-2D4smmaB8/5qenTuPpKp/analysis",
+      "white": "Doc. Abraham",
+      "black": "Mike Alex"
+    },
+    {
+      "bye": "Ferny Barreda"
+    }
+  ],
+  "Ronda 4": [
+    {
+      "white": "Diego Pérez",
+      "resultado": "0 - 1",
+      "black": "Ferny Barreda"
+    },
+    {
+      "white": "Doc. Abraham",
+      "gameLink": "https://lichess.org/0kCcR5jy/white",
+      "resultado": "0 - 1",
+      "black": "Carlos Imanol"
+    },
+    {
+      "black": "Noé Santos",
+      "resultado": "1 - 0",
+      "white": "Fer Vásquez"
+    },
+    {
+      "black": "Lalo Barajas",
+      "gameLink": "https://lichess.org/1ZB71Yps",
+      "white": "Mike Alex",
+      "resultado": "0 - 1"
+    },
+    {
+      "bye": "Albert AA"
+    }
+  ],
+  "Ronda 2": [
+    {
+      "black": "Noé Santos",
+      "resultado": "1 - 0",
+      "white": "Ferny Barreda"
+    },
+    {
+      "black": "Lalo Barajas",
+      "white": "Albert AA",
+      "gameLink": "https://lichess.org/xMNBoHHZ",
+      "resultado": "0 - 1"
+    },
+    {
+      "black": "Carlos Imanol",
+      "gameLink": "https://lichess.org/OogiFsky/white",
+      "white": "Diego Pérez",
+      "resultado": "0 - 1"
+    },
+    {
+      "resultado": "0 - 1",
+      "white": "Mike Alex",
+      "black": "Fer Vásquez"
+    },
+    {
+      "bye": "Doc. Abraham"
+    }
+  ],
+  "Ronda 6": [
+    {
+      "black": "Ferny Barreda",
+      "white": "Doc. Abraham"
+    },
+    {
+      "black": "Noé Santos",
+      "white": "Mike Alex"
+    },
+    {
+      "white": "Fer Vásquez",
+      "black": "Diego Pérez"
+    },
+    {
+      "white": "Albert AA",
+      "black": "Carlos Imanol"
+    },
+    {
+      "bye": "Lalo Barajas"
+    }
+  ],
+  "Ronda 3": [
+    {
+      "white": "Carlos Imanol",
+      "resultado": "1 - 0",
+      "gameLink": "https://lichess.org/XkCCQLo1",
+      "black": "Ferny Barreda"
+    },
+    {
+      "white": "Noé Santos",
+      "resultado": "0 - 1",
+      "black": "Doc. Abraham"
+    },
+    {
+      "black": "Diego Pérez",
+      "white": "Lalo Barajas",
+      "gameLink": "https://lichess.org/9vQ3usb4",
+      "resultado": "1 - 0"
+    },
+    {
+      "white": "Albert AA",
+      "gameLink": "https://lichess.org/EJjLdD1e",
+      "resultado": "1 - 0",
+      "black": "Mike Alex"
+    },
+    {
+      "bye": "Fer Vásquez"
+    }
+  ],
+  "Ronda 7": [
+    {
+      "black": "Doc. Abraham",
+      "white": "Lalo Barajas"
+    },
+    {
+      "white": "Ferny Barreda",
+      "black": "Fer Vásquez"
+    },
+    {
+      "black": "Mike Alex",
+      "white": "Carlos Imanol"
+    },
+    {
+      "black": "Albert AA",
+      "white": "Diego Pérez"
+    },
+    {
+      "bye": "Noé Santos"
+    }
+  ],
+  "Ronda 5": [
+    {
+      "white": "Ferny Barreda",
+      "black": "Lalo Barajas"
+    },
+    {
+      "white": "Diego Pérez",
+      "black": "Doc. Abraham"
+    },
+    {
+      "black": "Albert AA",
+      "white": "Noé Santos"
+    },
+    {
+      "gameLink": "https://lichess.org/y9u9I2Jd/white",
+      "resultado": "1 - 0",
+      "white": "Carlos Imanol",
+      "black": "Fer Vásquez"
+    },
+    {
+      "bye": "Mike Alex"
+    }
+  ],
+  "Ronda 9": [
+    {
+      "black": "Fer Vásquez",
+      "white": "Lalo Barajas"
+    },
+    {
+      "white": "Carlos Imanol",
+      "black": "Noé Santos"
+    },
+    {
+      "white": "Doc. Abraham",
+      "black": "Albert AA"
+    },
+    {
+      "black": "Mike Alex",
+      "white": "Ferny Barreda"
+    },
+    {
+      "bye": "Diego Pérez"
+    }
+  ],
+  "Ronda 8": [
+    {
+      "black": "Lalo Barajas",
+      "white": "Noé Santos"
+    },
+    {
+      "black": "Doc. Abraham",
+      "white": "Fer Vásquez"
+    },
+    {
+      "black": "Ferny Barreda",
+      "white": "Albert AA"
+    },
+    {
+      "black": "Diego Pérez",
+      "white": "Mike Alex"
+    },
+    {
+      "bye": "Carlos Imanol"
+    }
+  ]
+}
