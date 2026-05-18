@@ -56,7 +56,14 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
 
         if (!match.resultado) return;
         const res = match.resultado;
-
+      if (roundName === 'Ronda 4') {
+                console.log("Validando Ronda 4:", {
+                  blancas: `"${w}"`,
+                  negras: `"${b}"`,
+                  existeBlanca: !!stats[w],
+                  existeNegra: !!stats[b]
+                });
+              }
         // PARCHE DE SEGURIDAD: Si el jugador no existe en 'players', ignora la partida en vez de crashear
         if (!stats[w] || !stats[b]) return;
 

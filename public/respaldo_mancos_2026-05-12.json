@@ -1,0 +1,212 @@
+{
+  "Ronda 8": [
+    {
+      "white": "Noé Santos",
+      "black": "Lalo Barajas"
+    },
+    {
+      "black": "Doc. Abraham",
+      "white": "Fer Vásquez"
+    },
+    {
+      "white": "Albert AA",
+      "black": "Ferny Barreda"
+    },
+    {
+      "white": "Mike Alex",
+      "black": "Diego Pérez"
+    },
+    {
+      "bye": "Carlos Imanol"
+    }
+  ],
+  "Ronda 5": [
+    {
+      "black": "Lalo Barajas",
+      "white": "Ferny Barreda"
+    },
+    {
+      "black": "Doc. Abraham",
+      "white": "Diego Pérez"
+    },
+    {
+      "black": "Albert AA",
+      "white": "Noé Santos"
+    },
+    {
+      "white": "Carlos Imanol",
+      "black": "Fer Vásquez"
+    },
+    {
+      "bye": "Mike Alex"
+    }
+  ],
+  "Ronda 4": [
+    {
+      "black": "Ferny Barreda",
+      "white": "Diego Pérez"
+    },
+    {
+      "white": "Doc. Abraham",
+      "black": "Carlos Imanol"
+    },
+    {
+      "white": "Fer Vásquez",
+      "black": "Noé Santos"
+    },
+    {
+      "black": "Lalo Barajas",
+      "white": "Mike Alex"
+    },
+    {
+      "bye": "Albert AA"
+    }
+  ],
+  "Ronda 2": [
+    {
+      "resultado": "1 - 0",
+      "white": "Ferny Barreda",
+      "black": "Noé Santos"
+    },
+    {
+      "black": "Lalo Barajas",
+      "white": "Albert AA",
+      "gameLink": "https://lichess.org/xMNBoHHZ",
+      "resultado": "0 - 1"
+    },
+    {
+      "white": "Diego Pérez",
+      "black": "Carlos Imanol",
+      "gameLink": "https://lichess.org/OogiFsky/white",
+      "resultado": "0 - 1"
+    },
+    {
+      "resultado": "0 - 1",
+      "black": "Fer Vásquez",
+      "white": "Mike Alex"
+    },
+    {
+      "bye": "Doc. Abraham"
+    }
+  ],
+  "Ronda 7": [
+    {
+      "black": "Doc. Abraham",
+      "white": "Lalo Barajas"
+    },
+    {
+      "white": "Ferny Barreda",
+      "black": "Fer Vásquez"
+    },
+    {
+      "black": "Mike Alex",
+      "white": "Carlos Imanol"
+    },
+    {
+      "black": "Albert AA",
+      "white": "Diego Pérez"
+    },
+    {
+      "bye": "Noé Santos"
+    }
+  ],
+  "Ronda 6": [
+    {
+      "black": "Ferny Barreda",
+      "white": "Doc. Abraham"
+    },
+    {
+      "black": "Noé Santos",
+      "white": "Mike Alex"
+    },
+    {
+      "black": "Diego Pérez",
+      "white": "Fer Vásquez"
+    },
+    {
+      "black": "Carlos Imanol",
+      "white": "Albert AA"
+    },
+    {
+      "bye": "Lalo Barajas"
+    }
+  ],
+  "Ronda 1": [
+    {
+      "black": "Carlos Imanol",
+      "white": "Lalo Barajas",
+      "resultado": "1 - 0",
+      "gameLink": "https://lichess.org/69u64MgN"
+    },
+    {
+      "resultado": "0 - 1",
+      "gameLink": "https://lichess.org/RwYvkDUL",
+      "white": "Fer Vásquez",
+      "black": "Albert AA"
+    },
+    {
+      "white": "Noé Santos",
+      "black": "Diego Pérez",
+      "gameLink": "https://lichess.org/12CnA66O",
+      "resultado": "0 - 1"
+    },
+    {
+      "white": "Doc. Abraham",
+      "black": "Mike Alex",
+      "gameLink": "https://www.chess.com/analysis/collection/torneodemancos2026-2D4smmaB8/5qenTuPpKp/analysis",
+      "resultado": "0 - 1"
+    },
+    {
+      "bye": "Ferny Barreda"
+    }
+  ],
+  "Ronda 9": [
+    {
+      "black": "Fer Vásquez",
+      "white": "Lalo Barajas"
+    },
+    {
+      "white": "Carlos Imanol",
+      "black": "Noé Santos"
+    },
+    {
+      "black": "Albert AA",
+      "white": "Doc. Abraham"
+    },
+    {
+      "black": "Mike Alex",
+      "white": "Ferny Barreda"
+    },
+    {
+      "bye": "Diego Pérez"
+    }
+  ],
+  "Ronda 3": [
+    {
+      "white": "Carlos Imanol",
+      "black": "Ferny Barreda",
+      "gameLink": "https://lichess.org/XkCCQLo1",
+      "resultado": "1 - 0"
+    },
+    {
+      "resultado": "0 - 1",
+      "black": "Doc. Abraham",
+      "white": "Noé Santos"
+    },
+    {
+      "white": "Lalo Barajas",
+      "black": "Diego Pérez",
+      "resultado": "1 - 0",
+      "gameLink": "https://lichess.org/9vQ3usb4"
+    },
+    {
+      "gameLink": "https://lichess.org/EJjLdD1e",
+      "resultado": "1 - 0",
+      "white": "Albert AA",
+      "black": "Mike Alex"
+    },
+    {
+      "bye": "Fer Vásquez"
+    }
+  ]
+}

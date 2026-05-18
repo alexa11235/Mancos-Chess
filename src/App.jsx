@@ -69,12 +69,14 @@ function App() {
     const docRefResultados = doc(db, "torneo", "resultados");
     const docRefBelleza = doc(db, "torneo", "premioBelleza");
 
-    const unsubscribeResultados = onSnapshot(docRefResultados, async (docSnap) => {
-      if (docSnap.exists()) {
-        setTournamentPairings(docSnap.data());
-      } else {
-        await setDoc(docRefResultados, initialPairings);
-      }
+    const unsubscribeResultados = onSnapshot(docRefResultados, (docSnap) => {
+          if (docSnap.exists()) {
+            setTournamentPairings(docSnap.data());
+          } else {
+            // En lugar de crear un documento limpio y borrar el historial, 
+            // solo mandamos un error a la consola para proteger los datos.
+            console.error("Alerta: El documento 'resultados' no se encuentra en Firestore.");
+          }
     });
 
     const unsubscribeBelleza = onSnapshot(docRefBelleza, async (beautySnap) => {
@@ -91,16 +93,23 @@ function App() {
     };
   }, []);
 
-  const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
-    const updatedPairings = { ...tournamentPairings };
+const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
+    const docRef = doc(db, "torneo", "resultados");
+    
+    // Creamos las rutas dinámicas exactas dentro del objeto de Firebase
+    const updates = {};
+    
     if (resultado === 'BORRAR') {
-      updatedPairings[ronda][matchIndex].resultado = null;
-      updatedPairings[ronda][matchIndex].gameLink = null;
+      updates[`${ronda}.${matchIndex}.resultado`] = null;
+      updates[`${ronda}.${matchIndex}.gameLink`] = null;
     } else {
-      updatedPairings[ronda][matchIndex].resultado = resultado;
-      if (gameLink && gameLink.trim() !== '') updatedPairings[ronda][matchIndex].gameLink = gameLink.trim();
+      updates[`${ronda}.${matchIndex}.resultado`] = resultado;
+      updates[`${ronda}.${matchIndex}.gameLink`] = gameLink && gameLink.trim() !== '' ? gameLink.trim() : null;
     }
-    await setDoc(doc(db, "torneo", "resultados"), updatedPairings);
+
+    // updateDoc SOLO altera los campos definidos en 'updates'. 
+    // Si una pestaña vieja intenta guardar, solo afectará a su propio partido.
+    await updateDoc(docRef, updates);
   };
 
   const closeProposeModal = () => {

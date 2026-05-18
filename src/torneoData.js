@@ -80,7 +80,7 @@ export const pairings = {
   "Ronda 4": [
     { white: "Diego Pérez", black: "Ferny Barreda" },
     { white: "Doc. Abraham", black: "Carlos Imanol" },
-    { white: "Fer Vásquez", black: "Noé Santos" },
+    { white: "Noé Santos", black: "Fer Vásquez" },
     { white: "Mike Alex", black: "Lalo Barajas" },
     { bye: "Albert AA" }
   ],
