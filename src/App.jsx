@@ -13,30 +13,7 @@ import groupLegendPic from './assets/groupwlegend.jpg';
 import missUniversePic from './assets/missuniverse.jpg'; 
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase'; 
-// Pega esto JUSTO DEBAJO de tus imports en App.jsx, antes de "const App = () => {"
-const autoInyectarRonda5 = async () => {
-  try {
-    const docRef = doc(db, "torneo", "resultados");
-    await updateDoc(docRef, {
-      "Ronda 5": [
-        { "white": "Ferny Barreda", "black": "Lalo Barajas" },
-        { "white": "Diego Pérez", "black": "Doc. Abraham" },
-        { "white": "Noé Santos", "black": "Albert AA" },
-        { 
-          "white": "Carlos Imanol", 
-          "black": "Fer Vásquez", 
-          "resultado": "1 - 0", 
-          "gameLink": "https://lichess.org/y9u9I2Jd/white" 
-        },
-        { "bye": "Mike Alex" }
-      ]
-    });
-    console.log("🚀 ¡INYECCIÓN FORZADA TERMINADA! Revisa tu base de datos.");
-  } catch (error) {
-    console.error("Error en la inyección:", error);
-  }
-};
-autoInyectarRonda5(); // Se ejecuta solito al cargar la página
+
 function App() {
   const getMexicoDate = () => {
     const now = new Date();
