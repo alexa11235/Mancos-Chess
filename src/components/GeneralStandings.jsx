@@ -36,6 +36,10 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
     });
 
     Object.entries(pairings).forEach(([roundName, roundMatches]) => {
+      if (!Array.isArray(roundMatches)) {
+        console.warn(`La ${roundName} está corrupta en la base de datos y será ignorada.`);
+        return; 
+      }
       // Verificamos si ya es miércoles o posterior para esta ronda específica
       const isByeActive = today >= byeSchedule[roundName];
 
