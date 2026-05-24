@@ -13,7 +13,30 @@ import groupLegendPic from './assets/groupwlegend.jpg';
 import missUniversePic from './assets/missuniverse.jpg'; 
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase'; 
-
+// Pega esto JUSTO DEBAJO de tus imports en App.jsx, antes de "const App = () => {"
+const autoInyectarRonda5 = async () => {
+  try {
+    const docRef = doc(db, "torneo", "resultados");
+    await updateDoc(docRef, {
+      "Ronda 5": [
+        { "white": "Ferny Barreda", "black": "Lalo Barajas" },
+        { "white": "Diego Pérez", "black": "Doc. Abraham" },
+        { "white": "Noé Santos", "black": "Albert AA" },
+        { 
+          "white": "Carlos Imanol", 
+          "black": "Fer Vásquez", 
+          "resultado": "1 - 0", 
+          "gameLink": "https://lichess.org/y9u9I2Jd/white" 
+        },
+        { "bye": "Mike Alex" }
+      ]
+    });
+    console.log("🚀 ¡INYECCIÓN FORZADA TERMINADA! Revisa tu base de datos.");
+  } catch (error) {
+    console.error("Error en la inyección:", error);
+  }
+};
+autoInyectarRonda5(); // Se ejecuta solito al cargar la página
 function App() {
   const getMexicoDate = () => {
     const now = new Date();
@@ -94,22 +117,34 @@ function App() {
   }, []);
 
 const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
-    const docRef = doc(db, "torneo", "resultados");
-    
-    // Creamos las rutas dinámicas exactas dentro del objeto de Firebase
-    const updates = {};
-    
-    if (resultado === 'BORRAR') {
-      updates[`${ronda}.${matchIndex}.resultado`] = null;
-      updates[`${ronda}.${matchIndex}.gameLink`] = null;
-    } else {
-      updates[`${ronda}.${matchIndex}.resultado`] = resultado;
-      updates[`${ronda}.${matchIndex}.gameLink`] = gameLink && gameLink.trim() !== '' ? gameLink.trim() : null;
-    }
+    try {
+      const docRef = doc(db, "torneo", "resultados");
+      
+      // 1. Descargamos la información MÁS RECIENTE de la base de datos (Ignorando la pestaña vieja)
+      const docSnap = await getDoc(docRef);
 
-    // updateDoc SOLO altera los campos definidos en 'updates'. 
-    // Si una pestaña vieja intenta guardar, solo afectará a su propio partido.
-    await updateDoc(docRef, updates);
+      if (docSnap.exists()) {
+        const currentData = docSnap.data();
+        // 2. Extraemos la ronda actual y la clonamos en un Arreglo real
+        const rondaActualizada = [...currentData[ronda]]; 
+
+        // 3. Modificamos únicamente el partido que el usuario reportó
+        if (resultado === 'BORRAR') {
+          rondaActualizada[matchIndex].resultado = null;
+          rondaActualizada[matchIndex].gameLink = null;
+        } else {
+          rondaActualizada[matchIndex].resultado = resultado;
+          rondaActualizada[matchIndex].gameLink = gameLink && gameLink.trim() !== '' ? gameLink.trim() : null;
+        }
+
+        // 4. Subimos la ronda completa de vuelta a Firestore (como un Arreglo puro)
+        await updateDoc(docRef, {
+          [ronda]: rondaActualizada
+        });
+      }
+    } catch (error) {
+      console.error("Error fatal al guardar el resultado:", error);
+    }
   };
 
   const closeProposeModal = () => {
