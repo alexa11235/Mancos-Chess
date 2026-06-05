@@ -97,7 +97,7 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
         return a.totalByes - b.totalByes;
       });
 
-      return { sortedPlayers }; // <--- ¡Esta es la línea que te faltó!
+      return { sortedPlayers }; 
     }, [pairings, players]);
 
   const { sortedPlayers } = data;
@@ -167,10 +167,11 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
                          />
                       </div>
                     ) : (
-                      <span className={`font-mono font-bold text-[10px] md:text-base ${
-                        resultado === '1' ? 'text-green-400' : 
-                        resultado === '0' ? 'text-red-400' : 
-                        'text-gray-500'
+                      <span className={`font-mono inline-block transform ${
+                        resultado === '1' ? 'font-bold text-green-400 text-[10px] md:text-base' : 
+                        resultado === '0' ? 'font-bold text-red-400 text-[10px] md:text-base' : 
+                        resultado === '½' ? 'font-black text-cyan-400 text-[13px] md:text-xl scale-x-125' :
+                        'font-bold text-gray-500 text-[10px] md:text-base'
                       }`}>
                         {resultado || '-'}
                       </span>

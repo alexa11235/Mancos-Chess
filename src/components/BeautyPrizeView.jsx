@@ -3,35 +3,19 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDelete }) => {
   const [activeLikeMenu, setActiveLikeMenu] = useState(null);
   const [iframeScale, setIframeScale] = useState(1);
+  const [expandedGame, setExpandedGame] = useState(null);
   const cardRefs = useRef([]);
 
-  // LÓGICA DE AVANCE AUTOMÁTICO
   const filteredGames = useMemo(() => {
-    // 1. Ronda 1: Pasan todas las propuestas.
     if (currentSubView === 'Ronda 1') return games;
-
-    // Partidas que lograron llegar a Ronda 2 (3 o más votos en R1)
     const gamesInRonda2 = games.filter(g => g.votesR1 && g.votesR1.length >= 3);
-
-    // 2. Ronda 2: Mostrar las que pasaron la R1
-    if (currentSubView === 'Ronda 2') {
-      return gamesInRonda2;
-    }
-
-    // 3. Final: Las 2 con más votos en R2, PERO solo si hay 10+ votos totales en R2
+    if (currentSubView === 'Ronda 2') return gamesInRonda2;
     if (currentSubView === 'Final') {
-      // Calculamos cuántos votos totales se han dado en la Ronda 2
       const totalVotesInR2 = gamesInRonda2.reduce((total, g) => total + (g.votesR2?.length || 0), 0);
-
-      // Si no se han juntado 10 votos en total, nadie pasa a la final todavía
-      if (totalVotesInR2 < 10) {
-        return [];
-      }
-
-      // Si ya hay 10 o más votos, pasamos a las 2 mejores
+      if (totalVotesInR2 < 10) return [];
       return [...gamesInRonda2]
-        .sort((a, b) => (b.votesR2?.length || 0) - (a.votesR2?.length || 0)) 
-        .slice(0, 2); 
+        .sort((a, b) => (b.votesR2?.length || 0) - (a.votesR2?.length || 0))
+        .slice(0, 2);
     }
     return [];
   }, [games, currentSubView]);
@@ -54,7 +38,7 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
   const getLichessEmbedUrl = (link) => {
     const match = link.match(/lichess\.org\/(?:embed\/)?([a-zA-Z0-9]{8,12})/);
     if (match) {
-      const gameId = match[1].substring(0, 8); 
+      const gameId = match[1].substring(0, 8);
       return `https://lichess.org/embed/${gameId}?theme=auto&bg=dark`;
     }
     return '';
@@ -64,8 +48,8 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
     <div className="space-y-8">
       {filteredGames.length === 0 ? (
         <p className="text-center text-gray-500 py-10 italic">
-          {currentSubView === 'Ronda 1' 
-            ? 'Aún no hay partidas propuestas...' 
+          {currentSubView === 'Ronda 1'
+            ? 'Aún no hay partidas propuestas...'
             : currentSubView === 'Final'
               ? 'Aún no hay partidas clasificadas (se requieren al menos 10 votos totales en la Ronda 2)...'
               : 'Aún no hay partidas clasificadas para esta etapa...'}
@@ -76,10 +60,9 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
             const whiteWon = game.result === '1 - 0';
             const blackWon = game.result === '0 - 1';
             const isDraw = game.result === '½ - ½';
-
-            // Identificar qué array de votos usar en la UI
             const activeVoteField = currentSubView === 'Final' ? 'votesFinal' : currentSubView === 'Ronda 2' ? 'votesR2' : 'votesR1';
             const currentVotes = game[activeVoteField] || [];
+            const embedUrl = getLichessEmbedUrl(game.link);
 
             return (
               <div key={index} ref={el => cardRefs.current[index] = el} className="bg-[#151515] border border-gray-800 rounded-xl overflow-hidden shadow-2xl flex flex-col">
@@ -126,13 +109,26 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
                     </button>
                   </div>
                 </div>
-                <div className="w-full bg-[#121212] overflow-hidden relative" style={{ height: `${480 * iframeScale}px` }}>
-                  {getLichessEmbedUrl(game.link) ? (
+
+                {/* Tablero — pointer-events:none para que el click llegue al div padre */}
+                <div
+                  className="w-full bg-[#121212] overflow-hidden relative cursor-pointer"
+                  style={{ height: `${480 * iframeScale}px` }}
+                  onClick={() => embedUrl && setExpandedGame(game)}
+                >
+                  {embedUrl ? (
                     <div className="absolute inset-0 flex items-start justify-center overflow-hidden">
-                      <iframe src={getLichessEmbedUrl(game.link)} frameBorder="0" className="pointer-events-auto" style={{ zoom: iframeScale, width: '390px', height: '480px', marginLeft: iframeScale < 1 ? '10px' : '0px' }} />
+                      <iframe
+                        src={embedUrl}
+                        frameBorder="0"
+                        style={{ pointerEvents: 'none', zoom: iframeScale, width: '390px', height: '480px', marginLeft: iframeScale < 1 ? '10px' : '0px' }}
+                      />
                     </div>
-                  ) : <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">Link no válido</div>}
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">Link no válido</div>
+                  )}
                 </div>
+
                 <div className="p-4 bg-[#1a1a1a] mt-auto">
                   <div className="flex justify-between items-center border-b border-gray-800 pb-2 mb-2">
                     <span className={`text-sm ${whiteWon ? 'font-extrabold text-white' : isDraw ? 'font-bold text-gray-300' : 'text-gray-500'}`}>⚪ {game.white}</span>
@@ -144,6 +140,29 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Modal de expansión */}
+      {expandedGame && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setExpandedGame(null)}>
+          <div className="relative bg-[#151515] border border-gray-700 rounded-2xl overflow-hidden shadow-2xl w-full max-w-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center px-4 py-3 bg-[#1a1a1a] border-b border-gray-800">
+              <div className="flex gap-3 text-sm">
+                <span className={expandedGame.result === '1 - 0' ? 'font-extrabold text-white' : 'text-gray-500'}>⚪ {expandedGame.white}</span>
+                <span className="font-mono text-gray-400">{expandedGame.result}</span>
+                <span className={expandedGame.result === '0 - 1' ? 'font-extrabold text-white' : 'text-gray-500'}>⚫ {expandedGame.black}</span>
+              </div>
+              <button onClick={() => setExpandedGame(null)} className="text-gray-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="w-full" style={{ height: '560px' }}>
+              <iframe src={getLichessEmbedUrl(expandedGame.link)} frameBorder="0" className="w-full h-full" />
+            </div>
+          </div>
         </div>
       )}
     </div>

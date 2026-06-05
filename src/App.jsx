@@ -9,10 +9,31 @@ import BeautyPrizeView from './components/BeautyPrizeView';
 import uploadIcon from './assets/align-to-top-svgrepo-com.svg';
 import tournamentLogo from './assets/mancos.jpg';
 import groupPic from './assets/group.jpg';
-import groupLegendPic from './assets/groupwlegend.jpg'; 
-import missUniversePic from './assets/missuniverse.jpg'; 
+import groupLegendPic from './assets/groupwlegend.jpg';
+import missUniversePic from './assets/missuniverse.jpg';
+import noeprettyPic from './assets/noepretty.jpg';
+import imanolprettyPic from './assets/imanolpretty.jpg';
+import alexsonhappyPic from './assets/alexsonhappy.jpeg';
+import laloprettyPic from './assets/lalopretty.jpeg';
+import ferprettyPic from './assets/ferpretty.jpeg';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase'; 
+import { db } from './firebase';
+
+const BEAUTY_IMAGES = [
+  missUniversePic,
+  noeprettyPic,
+  imanolprettyPic,
+  alexsonhappyPic,
+  laloprettyPic,
+  ferprettyPic,
+];
+
+const getDailyBeautyImage = () => {
+  const dayOfYear = Math.floor(
+    (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
+  );
+  return BEAUTY_IMAGES[dayOfYear % BEAUTY_IMAGES.length];
+};
 
 function App() {
   const getMexicoDate = () => {
@@ -40,15 +61,14 @@ function App() {
   const getEasterEggImage = () => {
     const today = getMexicoDate();
     const ronda6Start = new Date('2026-05-25T00:00:00');
-    const ronda9End = new Date('2026-06-22T00:00:00'); 
+    const ronda9End = new Date('2026-06-22T00:00:00');
     return (today >= ronda6Start && today < ronda9End) ? groupLegendPic : groupPic;
   };
 
   const calculateBeautySubView = () => {
     const today = getMexicoDate();
-    const ronda2Date = new Date('2026-06-23T00:00:00'); 
-    const finalDate = new Date('2026-06-24T00:00:00');  
-
+    const ronda2Date = new Date('2026-06-23T00:00:00');
+    const finalDate = new Date('2026-06-24T00:00:00');
     if (today >= finalDate) return 'Final';
     if (today >= ronda2Date) return 'Ronda 2';
     return 'Ronda 1';
@@ -59,24 +79,25 @@ function App() {
   const [currentView, setCurrentView] = useState(calculateCurrentRound());
   const [beautySubView, setBeautySubView] = useState(calculateBeautySubView());
   const [tournamentPairings, setTournamentPairings] = useState(initialPairings);
-  const [beautyGames, setBeautyGames] = useState([]); 
+  const [beautyGames, setBeautyGames] = useState([]);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showProposeModal, setShowProposeModal] = useState(false);
   const [showEasterEgg, setShowEasterEgg] = useState(false);
+  const [showBeautyExpanded, setShowBeautyExpanded] = useState(false);
   const [editingBeautyGame, setEditingBeautyGame] = useState(null);
+
+  const dailyBeautyImage = getDailyBeautyImage();
 
   useEffect(() => {
     const docRefResultados = doc(db, "torneo", "resultados");
     const docRefBelleza = doc(db, "torneo", "premioBelleza");
 
     const unsubscribeResultados = onSnapshot(docRefResultados, (docSnap) => {
-          if (docSnap.exists()) {
-            setTournamentPairings(docSnap.data());
-          } else {
-            // En lugar de crear un documento limpio y borrar el historial, 
-            // solo mandamos un error a la consola para proteger los datos.
-            console.error("Alerta: El documento 'resultados' no se encuentra en Firestore.");
-          }
+      if (docSnap.exists()) {
+        setTournamentPairings(docSnap.data());
+      } else {
+        console.error("Alerta: El documento 'resultados' no se encuentra en Firestore.");
+      }
     });
 
     const unsubscribeBelleza = onSnapshot(docRefBelleza, async (beautySnap) => {
@@ -93,19 +114,13 @@ function App() {
     };
   }, []);
 
-const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
+  const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
     try {
       const docRef = doc(db, "torneo", "resultados");
-      
-      // 1. Descargamos la información MÁS RECIENTE de la base de datos (Ignorando la pestaña vieja)
       const docSnap = await getDoc(docRef);
-
       if (docSnap.exists()) {
         const currentData = docSnap.data();
-        // 2. Extraemos la ronda actual y la clonamos en un Arreglo real
-        const rondaActualizada = [...currentData[ronda]]; 
-
-        // 3. Modificamos únicamente el partido que el usuario reportó
+        const rondaActualizada = [...currentData[ronda]];
         if (resultado === 'BORRAR') {
           rondaActualizada[matchIndex].resultado = null;
           rondaActualizada[matchIndex].gameLink = null;
@@ -113,11 +128,7 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
           rondaActualizada[matchIndex].resultado = resultado;
           rondaActualizada[matchIndex].gameLink = gameLink && gameLink.trim() !== '' ? gameLink.trim() : null;
         }
-
-        // 4. Subimos la ronda completa de vuelta a Firestore (como un Arreglo puro)
-        await updateDoc(docRef, {
-          [ronda]: rondaActualizada
-        });
+        await updateDoc(docRef, { [ronda]: rondaActualizada });
       }
     } catch (error) {
       console.error("Error fatal al guardar el resultado:", error);
@@ -139,44 +150,42 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
 
     if (isDuplicate) {
       alert("¡Esta partida ya fue propuesta al Premio de Belleza! Verifica el link o los jugadores.");
-      return; 
+      return;
     }
 
-    const otherGamesByProposer = editingBeautyGame 
+    const otherGamesByProposer = editingBeautyGame
       ? beautyGames.filter(g => g.proposer === gameData.proposer && g.link !== editingBeautyGame.link)
       : beautyGames.filter(g => g.proposer === gameData.proposer);
 
     let ownGamesProposed = 0;
     let othersGamesProposed = 0;
-
     otherGamesByProposer.forEach(g => {
       if (g.white === g.proposer || g.black === g.proposer) ownGamesProposed++;
       else othersGamesProposed++;
     });
 
     const isProposingOwnGame = (gameData.white === gameData.proposer || gameData.black === gameData.proposer);
-    
     if (isProposingOwnGame && ownGamesProposed >= 1) {
       alert("Ya propusiste 1 partida tuya. No puedes proponer más.");
-      return; 
+      return;
     }
     if (!isProposingOwnGame && othersGamesProposed >= 1) {
       alert("Ya propusiste 1 partida de alguien más. No puedes proponer más.");
-      return; 
+      return;
     }
 
     let updatedGames;
     if (editingBeautyGame) {
-      updatedGames = beautyGames.map(g => 
-        g.link === editingBeautyGame.link 
-          ? { ...gameData, votesR1: g.votesR1 || [], votesR2: g.votesR2 || [], votesFinal: g.votesFinal || [] } 
+      updatedGames = beautyGames.map(g =>
+        g.link === editingBeautyGame.link
+          ? { ...gameData, votesR1: g.votesR1 || [], votesR2: g.votesR2 || [], votesFinal: g.votesFinal || [] }
           : g
       );
     } else {
       updatedGames = [...beautyGames, { ...gameData, votesR1: [], votesR2: [], votesFinal: [] }];
     }
     await setDoc(doc(db, "torneo", "premioBelleza"), { games: updatedGames });
-    closeProposeModal(); 
+    closeProposeModal();
   };
 
   const handleDeleteBeautyGame = async (gameToDelete) => {
@@ -193,25 +202,21 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
 
   const handleLikeGame = async (gameObj, userInitial) => {
     const activeVoteField = beautySubView === 'Final' ? 'votesFinal' : beautySubView === 'Ronda 2' ? 'votesR2' : 'votesR1';
-    const currentVotes = gameObj[activeVoteField] || []; 
+    const currentVotes = gameObj[activeVoteField] || [];
     const isLiking = !currentVotes.includes(userInitial);
-    
+
     if (isLiking) {
       const playerNameByInitial = Object.keys(players).find(p => players[p].inicial === userInitial);
       const isWinner = (gameObj.result === '1 - 0' && gameObj.white === playerNameByInitial) ||
                        (gameObj.result === '0 - 1' && gameObj.black === playerNameByInitial);
-      
       if (isWinner) {
         alert("¡Tramposo! No puedes votar por una partida en la que tú ganaste.");
         return;
       }
-
       const userLikesInRound = beautyGames.filter(g => (g[activeVoteField] || []).includes(userInitial)).length;
-      
       let maxLikes = 3;
       if (beautySubView === 'Ronda 2') maxLikes = 2;
       if (beautySubView === 'Final') maxLikes = 1;
-
       if (userLikesInRound >= maxLikes) {
         alert(`Límite alcanzado: Solo puedes dar ${maxLikes} voto(s) en la ${beautySubView}. Si quieres cambiar tu voto, quítale el like a otra partida primero.`);
         return;
@@ -222,10 +227,10 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
       if (g.link === gameObj.link) {
         const gVotes = g[activeVoteField] || [];
         return {
-           ...g,
-           [activeVoteField]: gVotes.includes(userInitial) 
-             ? gVotes.filter(initial => initial !== userInitial) 
-             : [...gVotes, userInitial]
+          ...g,
+          [activeVoteField]: gVotes.includes(userInitial)
+            ? gVotes.filter(initial => initial !== userInitial)
+            : [...gVotes, userInitial]
         };
       }
       return g;
@@ -235,8 +240,7 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
 
   const getBeautyInstructions = () => {
     const today = getMexicoDate();
-    const proposeDeadline = new Date('2026-06-22T23:59:59'); 
-    
+    const proposeDeadline = new Date('2026-06-22T23:59:59');
     if (beautySubView === 'Ronda 1') {
       if (today <= proposeDeadline) {
         return (
@@ -277,7 +281,7 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
     'Ronda 1': '20 al 26 de Abril',
     'Ronda 2': '27 de Abril al 03 de Mayo',
     'Ronda 3': '4 al 10 de Mayo',
-    'Ronda 4': '11 al 17 de Mayo', 
+    'Ronda 4': '11 al 17 de Mayo',
     'Ronda 5': '18 al 24 de Mayo',
     'Ronda 6': '25 al 31 de Mayo (Ronda conjunta)',
     'Ronda 7': '1 al 7 de Junio',
@@ -292,25 +296,23 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
 
   return (
     <div className="min-h-screen bg-[#121212] text-gray-200 p-2 md:p-6 font-sans md:[zoom:0.77] 2xl:[zoom:1]">
-      
+
       <div className="max-w-5xl mx-auto mb-10 flex flex-col items-center text-center">
-        
-       <div className={`flex items-center justify-center gap-4 mb-4 w-full ${isBeautyView ? 'relative translate-x-9 md:translate-x-0' : ''}`}>
-          <img 
-            src={isBeautyView ? missUniversePic : tournamentLogo} 
-            alt="Logo" 
-            onClick={!isBeautyView ? () => setShowEasterEgg(true) : undefined}
-            className={`w-16 h-16 object-cover rounded-full border-2 ${isBeautyView ? 'border-pink-500/30' : 'border-gray-700'} shadow-lg shrink-0 ${!isBeautyView ? 'cursor-pointer' : 'cursor-default'}`}
+        <div className={`flex items-center justify-center gap-4 mb-4 w-full ${isBeautyView ? 'relative translate-x-9 md:translate-x-0' : ''}`}>
+          <img
+            src={isBeautyView ? dailyBeautyImage : tournamentLogo}
+            alt="Logo"
+            onClick={isBeautyView ? () => setShowBeautyExpanded(true) : () => setShowEasterEgg(true)}
+            className={`w-16 h-16 object-cover rounded-full border-2 ${isBeautyView ? 'border-pink-500/30' : 'border-gray-700'} shadow-lg shrink-0 cursor-pointer`}
           />
           <h1 className={`text-4xl md:text-6xl font-extrabold tracking-tight text-left leading-tight ${isBeautyView ? 'text-pink-300' : 'text-white'}`}>
             {isBeautyView ? 'Premio de Belleza' : <><span className="hidden sm:inline">Torneo de Mancos</span><span className="sm:hidden">Torneo de<br/> Mancos</span></>}
           </h1>
         </div>
-        
+
         <div className="flex gap-4">
           <button onClick={() => setShowInfo(true)} className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded hover:bg-gray-800 transition-colors text-sm md:text-base">
-            {/* AQUÍ ESTÁ EL FIX: Le pusimos w-5 h-5 md:w-6 md:h-6 y flex items-center justify-center para forzar el círculo */}
-            <span className="text-blue-400 font-bold w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full border border-blue-400 text-sm md:text-base shrink-0">i</span> 
+            <span className="text-blue-400 font-bold w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full border border-blue-400 text-sm md:text-base shrink-0">i</span>
             INFO
           </button>
         </div>
@@ -322,10 +324,15 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
         </div>
       )}
 
+      {showBeautyExpanded && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-[100] p-4 cursor-default" onClick={() => setShowBeautyExpanded(false)}>
+          <img src={dailyBeautyImage} alt="Belleza del día" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" />
+        </div>
+      )}
+
       {showInfo && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
           <div className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-6 max-w-md shadow-2xl relative max-h-[90vh] overflow-y-auto scrollbar-thin">
-            
             {!isBeautyView ? (
               <>
                 <h2 className="text-xl font-bold text-white mb-4">Reglamento del Torneo de Mancos</h2>
@@ -355,25 +362,22 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
                 </ul>
               </>
             )}
-
             <button onClick={() => setShowInfo(false)} className="mt-6 w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors text-sm md:text-base">Cerrar</button>
           </div>
         </div>
       )}
 
       <div className="max-w-5xl mx-auto border-t border-gray-800 pt-6">
-        
         <p className="text-sm md:text-base text-gray-400 mb-8 font-light leading-relaxed text-center flex flex-col md:flex-row items-center justify-center gap-4">
           <span className="text-center md:text-right text-white md:whitespace-nowrap">
-          {isBeautyView ? (
-            getBeautyInstructions()
-          ) : (
-            <>El ganador sube el resultado y el árbitro (<span className="line-through decoration-double ">Ferny</span> Albert) verifica. Los resultados se publicarán en la Tabla General.</>
-          )}
-        </span>
-          
-          <span 
-            onClick={() => isBeautyView ? openEditModal(null) : setShowSubmitModal(true)} 
+            {isBeautyView ? (
+              getBeautyInstructions()
+            ) : (
+              <>El ganador sube el resultado y el árbitro (<span className="line-through decoration-double">Ferny</span> Albert) verifica. Los resultados se publicarán en la Tabla General.</>
+            )}
+          </span>
+          <span
+            onClick={() => isBeautyView ? openEditModal(null) : setShowSubmitModal(true)}
             className={`cursor-pointer font-medium tracking-wide inline-flex items-center gap-1.5 transition-colors border p-2 rounded-lg shrink-0 ${isBeautyView ? 'text-pink-400 border-pink-700/30 hover:bg-pink-900/20' : 'text-blue-400 border-blue-700/50 hover:bg-blue-900/30'} text-sm md:text-base`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -383,8 +387,7 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
           </span>
         </p>
 
-       <div className="mb-8 flex flex-col sm:flex-row gap-4 items-start w-full">
-          
+        <div className="mb-8 flex flex-col sm:flex-row gap-4 items-start w-full">
           <div className="flex flex-col gap-1 w-64">
             <div className="inline-block relative w-full">
               <label className="absolute -top-2.5 left-3 bg-[#121212] px-1 text-[10px] md:text-xs uppercase tracking-widest text-blue-400 z-10">Vista</label>
@@ -417,7 +420,7 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
             </div>
           )}
 
-          <div 
+          <div
             className="w-10 h-10 ml-auto cursor-default bg-transparent"
             onClick={() => {
               if (window.confirm("¿Descargar respaldo de seguridad (JSON) de los resultados del torneo?")) {
@@ -434,19 +437,18 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
               }
             }}
           ></div>
-
         </div>
 
-        <div className="max-w-5xl mx-auto"> 
+        <div className="max-w-5xl mx-auto">
           <div className={`mt-4 ${!isBeautyView ? 'bg-[#1a1a1a] border border-gray-800 rounded-lg shadow-xl overflow-hidden' : 'px-2 md:px-0'}`}>
             {currentView === 'Premio de Belleza' ? (
-              <BeautyPrizeView 
-                games={beautyGames} 
-                currentSubView={beautySubView} 
-                players={players} 
-                onLike={handleLikeGame} 
-                onEdit={openEditModal} 
-                onDelete={handleDeleteBeautyGame} 
+              <BeautyPrizeView
+                games={beautyGames}
+                currentSubView={beautySubView}
+                players={players}
+                onLike={handleLikeGame}
+                onEdit={openEditModal}
+                onDelete={handleDeleteBeautyGame}
               />
             ) : currentView === 'Tabla General' ? (
               <GeneralStandings pairings={tournamentPairings} players={players} onPlayerClick={(player) => setSelectedPlayer(player)} onLogoClick={() => setShowEasterEgg(true)} />
@@ -458,11 +460,8 @@ const handleSaveResult = async (ronda, matchIndex, resultado, gameLink) => {
       </div>
 
       <PlayerProfile player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
-      
       <SubmitResultModal isOpen={showSubmitModal} onClose={() => setShowSubmitModal(false)} currentRound={currentView} pairings={tournamentPairings} onSave={handleSaveResult} />
-      
       <ProposeGameModal isOpen={showProposeModal} onClose={closeProposeModal} onSave={handleProposeGame} players={players} editingGame={editingBeautyGame} />
-      
     </div>
   );
 }
