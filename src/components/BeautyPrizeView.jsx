@@ -7,14 +7,14 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
   const cardRefs = useRef([]);
 
   const filteredGames = useMemo(() => {
-    if (currentSubView === 'Ronda 1') return games;
-    const gamesInRonda2 = games.filter(g => g.votesR1 && g.votesR1.length >= 3);
-    if (currentSubView === 'Ronda 2') return gamesInRonda2;
+    if (currentSubView === 'Eliminatoria') return games;
+    
     if (currentSubView === 'Final') {
-      const totalVotesInR2 = gamesInRonda2.reduce((total, g) => total + (g.votesR2?.length || 0), 0);
-      if (totalVotesInR2 < 10) return [];
-      return [...gamesInRonda2]
-        .sort((a, b) => (b.votesR2?.length || 0) - (a.votesR2?.length || 0))
+      const totalVotesInEliminatoria = games.reduce((total, g) => total + (g.votesEliminatoria?.length || 0), 0);
+      if (totalVotesInEliminatoria < 10) return [];
+      
+      return [...games]
+        .sort((a, b) => (b.votesEliminatoria?.length || 0) - (a.votesEliminatoria?.length || 0))
         .slice(0, 2);
     }
     return [];
@@ -48,11 +48,9 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
     <div className="space-y-8">
       {filteredGames.length === 0 ? (
         <p className="text-center text-gray-500 py-10 italic">
-          {currentSubView === 'Ronda 1'
+          {currentSubView === 'Eliminatoria'
             ? 'Aún no hay partidas propuestas...'
-            : currentSubView === 'Final'
-              ? 'Aún no hay partidas clasificadas (se requieren al menos 10 votos totales en la Ronda 2)...'
-              : 'Aún no hay partidas clasificadas para esta etapa...'}
+            : 'Aún no hay partidas clasificadas (se requieren al menos 10 votos totales en la Eliminatoria)...'}
         </p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -60,7 +58,7 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
             const whiteWon = game.result === '1 - 0';
             const blackWon = game.result === '0 - 1';
             const isDraw = game.result === '½ - ½';
-            const activeVoteField = currentSubView === 'Final' ? 'votesFinal' : currentSubView === 'Ronda 2' ? 'votesR2' : 'votesR1';
+            const activeVoteField = currentSubView === 'Final' ? 'votesFinal' : 'votesEliminatoria';
             const currentVotes = game[activeVoteField] || [];
             const embedUrl = getLichessEmbedUrl(game.link);
 
@@ -110,7 +108,6 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
                   </div>
                 </div>
 
-                {/* Tablero — pointer-events:none para que el click llegue al div padre */}
                 <div
                   className="w-full bg-[#121212] overflow-hidden relative cursor-pointer"
                   style={{ height: `${480 * iframeScale}px` }}
@@ -143,7 +140,6 @@ const BeautyPrizeView = ({ games, currentSubView, players, onLike, onEdit, onDel
         </div>
       )}
 
-      {/* Modal de expansión */}
       {expandedGame && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setExpandedGame(null)}>
           <div className="relative bg-[#151515] border border-gray-700 rounded-2xl overflow-hidden shadow-2xl w-full max-w-2xl" onClick={e => e.stopPropagation()}>

@@ -16,7 +16,7 @@ import imanolprettyPic from './assets/imanolpretty.jpg';
 import alexsonhappyPic from './assets/alexsonhappy.jpeg';
 import laloprettyPic from './assets/lalopretty.jpeg';
 import ferprettyPic from './assets/ferpretty.jpeg';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
 
 const BEAUTY_IMAGES = [
@@ -67,13 +67,10 @@ function App() {
 
   const calculateBeautySubView = () => {
     const today = getMexicoDate();
-    const ronda2Date = new Date('2026-06-23T00:00:00');
-    const finalDate = new Date('2026-06-24T00:00:00');
+    const finalDate = new Date('2026-06-24T00:00:00'); // La final empieza el Miércoles 24
     if (today >= finalDate) return 'Final';
-    if (today >= ronda2Date) return 'Ronda 2';
-    return 'Ronda 1';
+    return 'Eliminatoria';
   };
-
   const [showInfo, setShowInfo] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [currentView, setCurrentView] = useState(calculateCurrentRound());
@@ -178,11 +175,11 @@ function App() {
     if (editingBeautyGame) {
       updatedGames = beautyGames.map(g =>
         g.link === editingBeautyGame.link
-          ? { ...gameData, votesR1: g.votesR1 || [], votesR2: g.votesR2 || [], votesFinal: g.votesFinal || [] }
+          ? { ...gameData, votesEliminatoria: g.votesEliminatoria || [], votesFinal: g.votesFinal || [] }
           : g
       );
     } else {
-      updatedGames = [...beautyGames, { ...gameData, votesR1: [], votesR2: [], votesFinal: [] }];
+      updatedGames = [...beautyGames, { ...gameData, votesEliminatoria: [], votesFinal: [] }];
     }
     await setDoc(doc(db, "torneo", "premioBelleza"), { games: updatedGames });
     closeProposeModal();
@@ -201,7 +198,7 @@ function App() {
   };
 
   const handleLikeGame = async (gameObj, userInitial) => {
-    const activeVoteField = beautySubView === 'Final' ? 'votesFinal' : beautySubView === 'Ronda 2' ? 'votesR2' : 'votesR1';
+    const activeVoteField = beautySubView === 'Final' ? 'votesFinal' : 'votesEliminatoria';
     const currentVotes = gameObj[activeVoteField] || [];
     const isLiking = !currentVotes.includes(userInitial);
 
@@ -214,9 +211,8 @@ function App() {
         return;
       }
       const userLikesInRound = beautyGames.filter(g => (g[activeVoteField] || []).includes(userInitial)).length;
-      let maxLikes = 3;
-      if (beautySubView === 'Ronda 2') maxLikes = 2;
-      if (beautySubView === 'Final') maxLikes = 1;
+      let maxLikes = beautySubView === 'Eliminatoria' ? 2 : 1;
+      
       if (userLikesInRound >= maxLikes) {
         alert(`Límite alcanzado: Solo puedes dar ${maxLikes} voto(s) en la ${beautySubView}. Si quieres cambiar tu voto, quítale el like a otra partida primero.`);
         return;
@@ -240,31 +236,23 @@ function App() {
 
   const getBeautyInstructions = () => {
     const today = getMexicoDate();
-    const proposeDeadline = new Date('2026-06-22T23:59:59');
-    if (beautySubView === 'Ronda 1') {
+    const proposeDeadline = new Date('2026-06-22T23:59:59'); // Límite de propuestas: Lunes 22
+
+    if (beautySubView === 'Eliminatoria') {
       if (today <= proposeDeadline) {
         return (
           <>
             Puedes proponer a lo más 1 victoria tuya y a lo más 1 victoria de alguien más.
             <br/>
-            <span className="font-bold mt-1 inline-block text-white">Fecha límite: Lunes 22 de junio, 11:59 p.m.</span>
+            <span className="font-bold mt-1 inline-block text-white">Fecha límite para proponer: Lunes 22 de junio, 11:59 p.m.</span>
           </>
         );
       }
       return (
         <>
-          Tienes 3 votos, no puedes votar por partidas que hayas ganado. Las partidas con 3 o más votos avanzan a la siguiente ronda.
+          Tienes 2 votos, no puedes votar por partidas que hayas ganado. Las 2 con más votos avanzan.
           <br/>
-          <span className="font-bold mt-1 inline-block text-white">Fecha límite es: Martes 23 de junio, 11:59 p.m.</span>
-        </>
-      );
-    }
-    if (beautySubView === 'Ronda 2') {
-      return (
-        <>
-          Tienes 2 votos, las 2 partidas con más votos avanzan a la siguiente ronda.
-          <br/>
-          <span className="font-bold mt-1 inline-block text-white">Fecha límite es: Miércoles 24 de junio, 11:59 p.m.</span>
+          <span className="font-bold mt-1 inline-block text-white">Fecha límite de votación es: Martes 23 de junio, 11:59 p.m.</span>
         </>
       );
     }
@@ -272,7 +260,7 @@ function App() {
       <>
         Tienes solo 1 voto. Si ganaste una partida que está en la final, no puedes votar.
         <br/>
-        <span className="font-bold mt-1 inline-block text-white">Fecha límite es: Jueves 25 de junio, 11:59 p.m.</span>
+        <span className="font-bold mt-1 inline-block text-white">Fecha límite es: Miércoles 24 de junio, 11:59 p.m.</span>
       </>
     );
   };
@@ -348,15 +336,14 @@ function App() {
             ) : (
               <>
                 <h2 className="text-xl font-bold text-white mb-4">Premio de Belleza</h2>
-                <p className="text-sm md:text-base text-pink-200 italic mb-4">Aquí premiaremos a la chica digo a la partida más linda de todo el torneo.</p>
+                <p className="text-sm md:text-base text-pink-200 italic mb-4">Aquí premiaremos a la partida más linda de todo el torneo.</p>
                 <ul className="space-y-2 text-sm md:text-base text-gray-300">
                   <li><strong className="text-pink-300">Premio:</strong> El ganador de la votación se lleva 400 varos.</li>
                   <li><strong className="text-pink-300">Propuestas:</strong> Cada jugador puede proponer a lo más 1 partida suya y a lo más 1 de alguien más.</li>
-                  <li><strong className="text-pink-300">Votaciones: </strong> Se harán en 3 etapas eliminatorias.
+                  <li><strong className="text-pink-300">Votaciones: </strong> Se harán en 2 etapas.
                     <ul className="list-disc pl-5 mt-1 text-xs md:text-sm space-y-1">
-                      <li><strong className="text-white">Ronda 1:</strong> 3 votos. No votas por partidas ganadas tuyas. Las de 3+ votos avanzan.</li>
-                      <li><strong className="text-white">Ronda 2:</strong> 2 votos. Las 2 con más votos avanzan a la Final.</li>
-                      <li><strong className="text-white">Final:</strong> 1 voto. Si ganaste una de las partidas en la final, no votas.</li>
+                      <li><strong className="text-white">Eliminatoria:</strong> 2 votos disponibles. No votas por partidas ganadas tuyas. Las 2 con más votos avanzan.</li>
+                      <li><strong className="text-white">Final:</strong> 1 voto disponible. Si ganaste una de las partidas en la final, no votas.</li>
                     </ul>
                   </li>
                 </ul>
@@ -410,8 +397,7 @@ function App() {
               <div className="inline-block relative w-full">
                 <label className="absolute -top-2.5 left-3 bg-[#121212] px-1 text-[10px] md:text-xs uppercase tracking-widest text-pink-400 z-10">Etapa</label>
                 <select value={beautySubView} onChange={(e) => setBeautySubView(e.target.value)} className="w-full bg-transparent border border-pink-500/30 text-white p-3 rounded appearance-none focus:outline-none focus:border-pink-400 cursor-pointer relative z-0 text-sm md:text-base">
-                  <option value="Ronda 1" className="bg-[#1a1a1a]">Ronda 1</option>
-                  <option value="Ronda 2" className="bg-[#1a1a1a]">Ronda 2</option>
+                  <option value="Eliminatoria" className="bg-[#1a1a1a]">Eliminatoria</option>
                   <option value="Final" className="bg-[#1a1a1a]">Final</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-pink-400"><svg className="fill-current h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg></div>
