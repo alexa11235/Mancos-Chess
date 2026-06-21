@@ -88,17 +88,33 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
       });
     });
 
-  const sortedPlayers = Object.values(stats).sort((a, b) => {
+    const sortedPlayers = Object.values(stats).sort((a, b) => {
         // 1. Criterio principal: Quien tenga más puntos va primero
         if (b.puntos !== a.puntos) {
           return b.puntos - a.puntos;
         }
         // 2. Criterio de desempate: Si tienen los mismos puntos, el que tenga MENOS Byes va primero
         return a.totalByes - b.totalByes;
-      });
+    });
 
-      return { sortedPlayers }; 
-    }, [pairings, players]);
+    // --- LÓGICA DE EMPATES (RANKS) ---
+    sortedPlayers.forEach((player, index) => {
+      if (index === 0) {
+        player.rank = 1;
+      } else {
+        const prev = sortedPlayers[index - 1];
+        // Si tienen exactamente los mismos puntos y byes, comparten rango
+        if (player.puntos === prev.puntos && player.totalByes === prev.totalByes) {
+          player.rank = prev.rank;
+        } else {
+          // De lo contrario, toman su lugar real en la lista (ej. 1, 2, 2, 4)
+          player.rank = index + 1;
+        }
+      }
+    });
+
+    return { sortedPlayers }; 
+  }, [pairings, players]);
 
   const { sortedPlayers } = data;
 
@@ -186,12 +202,12 @@ const GeneralStandings = ({ pairings, players, onPlayerClick, onLogoClick }) => 
 
               <td className="p-0 md:p-3 text-center">
                 <span className={`inline-flex items-center justify-center w-4 h-4 md:w-6 md:h-6 rounded-full font-bold text-[8px] md:text-[10px] ${
-                  rowIndex === 0 ? 'bg-yellow-500 text-black shadow-[0_0_10px_rgba(234,179,8,0.3)]' :
-                  rowIndex === 1 ? 'bg-gray-300 text-black' :
-                  rowIndex === 2 ? 'bg-amber-700 text-white' :
+                  playerRow.rank === 1 ? 'bg-yellow-500 text-black shadow-[0_0_10px_rgba(234,179,8,0.3)]' :
+                  playerRow.rank === 2 ? 'bg-gray-300 text-black' :
+                  playerRow.rank === 3 ? 'bg-amber-700 text-white' :
                   'text-gray-500 border border-gray-800'
                 }`}>
-                  {rowIndex + 1}
+                  {playerRow.rank}
                 </span>
               </td>
             </tr>
